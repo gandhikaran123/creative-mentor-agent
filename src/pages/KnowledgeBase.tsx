@@ -260,12 +260,24 @@ export default function KnowledgeBase() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>File Name</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Brand</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Uploaded By</TableHead>
-              <TableHead>Date</TableHead>
+              <TableHead className="cursor-pointer select-none" onClick={() => toggleSort("fileName")}>
+                <span className="inline-flex items-center">File Name{sortIcon("fileName")}</span>
+              </TableHead>
+              <TableHead className="cursor-pointer select-none" onClick={() => toggleSort("fileType")}>
+                <span className="inline-flex items-center">Type{sortIcon("fileType")}</span>
+              </TableHead>
+              <TableHead className="cursor-pointer select-none" onClick={() => toggleSort("brand")}>
+                <span className="inline-flex items-center">Brand{sortIcon("brand")}</span>
+              </TableHead>
+              <TableHead className="cursor-pointer select-none" onClick={() => toggleSort("category")}>
+                <span className="inline-flex items-center">Category{sortIcon("category")}</span>
+              </TableHead>
+              <TableHead className="cursor-pointer select-none" onClick={() => toggleSort("uploadedBy")}>
+                <span className="inline-flex items-center">Uploaded By{sortIcon("uploadedBy")}</span>
+              </TableHead>
+              <TableHead className="cursor-pointer select-none" onClick={() => toggleSort("uploadedDate")}>
+                <span className="inline-flex items-center">Date{sortIcon("uploadedDate")}</span>
+              </TableHead>
               <TableHead className="w-[100px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
