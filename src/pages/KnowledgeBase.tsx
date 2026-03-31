@@ -318,7 +318,6 @@ export default function KnowledgeBase() {
                 <TableCell colSpan={8} className="text-center text-muted-foreground py-10">
                   No documents found.
                 </TableCell>
-                </TableCell>
               </TableRow>
             ) : (
               paginatedDocs.map((doc) => (
