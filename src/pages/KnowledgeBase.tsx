@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Trash2, FileText, Upload, Pencil } from "lucide-react";
+import { Plus, Trash2, FileText, Upload, Pencil, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -50,11 +50,39 @@ export default function KnowledgeBase() {
   const [editFileType, setEditFileType] = useState<FileType | "">("");
   const [editDialogOpen, setEditDialogOpen] = useState(false);
 
+  // Sorting
+  const [sortField, setSortField] = useState<string | null>(null);
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+
+  const toggleSort = (field: string) => {
+    if (sortField === field) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortField(field);
+      setSortDir("asc");
+    }
+  };
+
+  const sortIcon = (field: string) => {
+    if (sortField !== field) return <ArrowUpDown className="h-3 w-3 ml-1 text-muted-foreground/50" />;
+    return sortDir === "asc"
+      ? <ArrowUp className="h-3 w-3 ml-1 text-primary" />
+      : <ArrowDown className="h-3 w-3 ml-1 text-primary" />;
+  };
+
   const filteredDocs = docs.filter((d) => {
     if (filterBrand !== "all" && d.brand !== filterBrand) return false;
     if (filterCategory !== "all" && d.category !== filterCategory) return false;
     if (filterType !== "all" && d.fileType !== filterType) return false;
     return true;
+  });
+
+  const sortedDocs = [...filteredDocs].sort((a, b) => {
+    if (!sortField) return 0;
+    const aVal = String(a[sortField as keyof KnowledgeDocument] ?? "");
+    const bVal = String(b[sortField as keyof KnowledgeDocument] ?? "");
+    const cmp = aVal.localeCompare(bVal);
+    return sortDir === "asc" ? cmp : -cmp;
   });
 
   const filterCategories = filterBrand !== "all" ? categoryMap[filterBrand] || [] : [];
@@ -232,24 +260,36 @@ export default function KnowledgeBase() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>File Name</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Brand</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Uploaded By</TableHead>
-              <TableHead>Date</TableHead>
+              <TableHead className="cursor-pointer select-none" onClick={() => toggleSort("fileName")}>
+                <span className="inline-flex items-center">File Name{sortIcon("fileName")}</span>
+              </TableHead>
+              <TableHead className="cursor-pointer select-none" onClick={() => toggleSort("fileType")}>
+                <span className="inline-flex items-center">Type{sortIcon("fileType")}</span>
+              </TableHead>
+              <TableHead className="cursor-pointer select-none" onClick={() => toggleSort("brand")}>
+                <span className="inline-flex items-center">Brand{sortIcon("brand")}</span>
+              </TableHead>
+              <TableHead className="cursor-pointer select-none" onClick={() => toggleSort("category")}>
+                <span className="inline-flex items-center">Category{sortIcon("category")}</span>
+              </TableHead>
+              <TableHead className="cursor-pointer select-none" onClick={() => toggleSort("uploadedBy")}>
+                <span className="inline-flex items-center">Uploaded By{sortIcon("uploadedBy")}</span>
+              </TableHead>
+              <TableHead className="cursor-pointer select-none" onClick={() => toggleSort("uploadedDate")}>
+                <span className="inline-flex items-center">Date{sortIcon("uploadedDate")}</span>
+              </TableHead>
               <TableHead className="w-[100px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredDocs.length === 0 ? (
+            {sortedDocs.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="text-center text-muted-foreground py-10">
                   No documents found.
                 </TableCell>
               </TableRow>
             ) : (
-              filteredDocs.map((doc) => (
+              sortedDocs.map((doc) => (
                 <TableRow key={doc.id}>
                   <TableCell className="font-medium flex items-center gap-2">
                     <FileText className="h-4 w-4 text-muted-foreground shrink-0" />
@@ -281,7 +321,7 @@ export default function KnowledgeBase() {
         </Table>
       </Card>
 
-      <p className="text-xs text-muted-foreground">{filteredDocs.length} document{filteredDocs.length !== 1 ? "s" : ""}</p>
+      <p className="text-xs text-muted-foreground">{sortedDocs.length} document{sortedDocs.length !== 1 ? "s" : ""}</p>
 
       {/* Edit Dialog */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
