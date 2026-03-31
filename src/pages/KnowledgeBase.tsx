@@ -149,23 +149,26 @@ export default function KnowledgeBase() {
   const filterCategories = filterBrand !== "all" ? categoryMap[filterBrand] || [] : [];
 
   const handleUpload = () => {
-    if (!uploadBrand || !uploadCategory || !uploadFileType || !uploadFileName) return;
-    const newDoc = addDocument({
-      fileName: uploadFileName,
-      fileType: uploadFileType as FileType,
-      brand: uploadBrand,
-      category: uploadCategory,
-      uploadedBy: "Current User",
-      uploadedDate: new Date().toISOString().split("T")[0],
-      fileUrl: "#",
+    if (!uploadBrand || !uploadCategory || !uploadFileType || uploadFileNames.length === 0) return;
+    uploadFileNames.forEach((fileName) => {
+      addDocument({
+        fileName,
+        fileType: uploadFileType as FileType,
+        brand: uploadBrand,
+        category: uploadCategory,
+        uploadedBy: "Current User",
+        uploadedDate: new Date().toISOString().split("T")[0],
+        fileUrl: "#",
+      });
     });
     setDocs(getDocuments());
+    const count = uploadFileNames.length;
     setUploadBrand("");
     setUploadCategory("");
     setUploadFileType("");
-    setUploadFileName("");
+    setUploadFileNames([]);
     setDialogOpen(false);
-    toast({ title: "Document uploaded", description: uploadFileName + " has been added to the knowledge base." });
+    toast({ title: `${count} document${count !== 1 ? "s" : ""} uploaded`, description: `Added to the knowledge base.` });
   };
 
   const [deleteTarget, setDeleteTarget] = useState<KnowledgeDocument | null>(null);
