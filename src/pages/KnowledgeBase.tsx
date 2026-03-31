@@ -343,17 +343,34 @@ export default function KnowledgeBase() {
                   </div>
                 )}
               </div>
+              {/* Upload progress */}
+              {isUploading && (
+                <div className="space-y-2 pt-1">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <span className="flex items-center gap-1.5">
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                      Uploading…
+                    </span>
+                    <span>{uploadProgress}%</span>
+                  </div>
+                  <Progress value={uploadProgress} className="h-2" />
+                </div>
+              )}
               <div className="flex justify-end gap-2 pt-2">
                 <DialogClose asChild>
-                  <Button variant="outline">Cancel</Button>
+                  <Button variant="outline" disabled={isUploading}>Cancel</Button>
                 </DialogClose>
                 <Button
                   onClick={handleUpload}
-                  disabled={!uploadBrand || !uploadCategory || !uploadFileType || uploadFileNames.length === 0}
+                  disabled={!uploadBrand || !uploadCategory || !uploadFileType || uploadFileNames.length === 0 || isUploading}
                   className="gap-2"
                 >
-                  <Upload className="h-4 w-4" />
-                  Upload {uploadFileNames.length > 1 ? `${uploadFileNames.length} Files` : ""}
+                  {isUploading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Upload className="h-4 w-4" />
+                  )}
+                  {isUploading ? "Uploading…" : uploadFileNames.length > 1 ? `Upload ${uploadFileNames.length} Files` : "Upload"}
                 </Button>
               </div>
             </div>
