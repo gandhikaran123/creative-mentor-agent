@@ -191,7 +191,23 @@ export default function KnowledgeBase() {
   };
 
   return (
-    <div className="p-8 max-w-6xl mx-auto space-y-8 animate-fade-in">
+    <div
+      className="p-8 max-w-6xl mx-auto space-y-8 animate-fade-in relative"
+      onDragEnter={handlePageDragEnter}
+      onDragLeave={handlePageDragLeave}
+      onDragOver={handlePageDragOver}
+      onDrop={handlePageDrop}
+    >
+      {/* Full-page drag overlay */}
+      {isDraggingPage && (
+        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center pointer-events-none">
+          <div className="border-2 border-dashed border-primary rounded-2xl p-12 text-center">
+            <UploadCloud className="h-16 w-16 text-primary mx-auto mb-4" />
+            <p className="text-lg font-semibold text-foreground">Drop file to upload</p>
+            <p className="text-sm text-muted-foreground mt-1">PDF, DOC, DOCX, XLS, XLSX</p>
+          </div>
+        </div>
+      )}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">Knowledge Base</h1>
