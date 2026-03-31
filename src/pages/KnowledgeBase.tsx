@@ -46,7 +46,7 @@ export default function KnowledgeBase() {
   const [uploadBrand, setUploadBrand] = useState("");
   const [uploadCategory, setUploadCategory] = useState("");
   const [uploadFileType, setUploadFileType] = useState<FileType | "">("");
-  const [uploadFileName, setUploadFileName] = useState("");
+  const [uploadFileNames, setUploadFileNames] = useState<string[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
 
   // Drag-and-drop state
@@ -61,13 +61,19 @@ export default function KnowledgeBase() {
 
   const handleFileDrop = useCallback((files: FileList | null) => {
     if (!files || files.length === 0) return;
-    const file = files[0];
-    if (!isAcceptedFile(file)) {
-      toast({ title: "Invalid file type", description: "Please upload a PDF, DOC, DOCX, XLS, or XLSX file.", variant: "destructive" });
-      return;
+    const validFiles: string[] = [];
+    const invalidFiles: string[] = [];
+    Array.from(files).forEach((file) => {
+      if (isAcceptedFile(file)) validFiles.push(file.name);
+      else invalidFiles.push(file.name);
+    });
+    if (invalidFiles.length > 0) {
+      toast({ title: "Some files skipped", description: `${invalidFiles.length} file(s) had unsupported types (PDF, DOC, DOCX, XLS, XLSX only).`, variant: "destructive" });
     }
-    setUploadFileName(file.name);
-    if (!dialogOpen) setDialogOpen(true);
+    if (validFiles.length > 0) {
+      setUploadFileNames((prev) => [...prev, ...validFiles]);
+      if (!dialogOpen) setDialogOpen(true);
+    }
   }, [dialogOpen, toast]);
 
   // Page-level drag handlers
@@ -143,23 +149,26 @@ export default function KnowledgeBase() {
   const filterCategories = filterBrand !== "all" ? categoryMap[filterBrand] || [] : [];
 
   const handleUpload = () => {
-    if (!uploadBrand || !uploadCategory || !uploadFileType || !uploadFileName) return;
-    const newDoc = addDocument({
-      fileName: uploadFileName,
-      fileType: uploadFileType as FileType,
-      brand: uploadBrand,
-      category: uploadCategory,
-      uploadedBy: "Current User",
-      uploadedDate: new Date().toISOString().split("T")[0],
-      fileUrl: "#",
+    if (!uploadBrand || !uploadCategory || !uploadFileType || uploadFileNames.length === 0) return;
+    uploadFileNames.forEach((fileName) => {
+      addDocument({
+        fileName,
+        fileType: uploadFileType as FileType,
+        brand: uploadBrand,
+        category: uploadCategory,
+        uploadedBy: "Current User",
+        uploadedDate: new Date().toISOString().split("T")[0],
+        fileUrl: "#",
+      });
     });
     setDocs(getDocuments());
+    const count = uploadFileNames.length;
     setUploadBrand("");
     setUploadCategory("");
     setUploadFileType("");
-    setUploadFileName("");
+    setUploadFileNames([]);
     setDialogOpen(false);
-    toast({ title: "Document uploaded", description: uploadFileName + " has been added to the knowledge base." });
+    toast({ title: `${count} document${count !== 1 ? "s" : ""} uploaded`, description: `Added to the knowledge base.` });
   };
 
   const [deleteTarget, setDeleteTarget] = useState<KnowledgeDocument | null>(null);
@@ -253,56 +262,63 @@ export default function KnowledgeBase() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">File</label>
-                {!uploadFileName ? (
-                  <div
-                    className={`relative border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
-                      isDraggingZone
-                        ? "border-primary bg-primary/5"
-                        : "border-muted-foreground/25 hover:border-primary/50 hover:bg-muted/30"
-                    }`}
-                    onDragEnter={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingZone(true); }}
-                    onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingZone(false); }}
-                    onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setIsDraggingZone(false);
-                      handleFileDrop(e.dataTransfer.files);
+                <label className="text-sm font-medium text-foreground">
+                  Files {uploadFileNames.length > 0 && <span className="text-muted-foreground font-normal">({uploadFileNames.length})</span>}
+                </label>
+                {/* Drop zone - always visible */}
+                <div
+                  className={`relative border-2 border-dashed rounded-lg p-5 text-center cursor-pointer transition-colors ${
+                    isDraggingZone
+                      ? "border-primary bg-primary/5"
+                      : "border-muted-foreground/25 hover:border-primary/50 hover:bg-muted/30"
+                  }`}
+                  onDragEnter={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingZone(true); }}
+                  onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingZone(false); }}
+                  onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsDraggingZone(false);
+                    handleFileDrop(e.dataTransfer.files);
+                  }}
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <UploadCloud className="h-7 w-7 text-muted-foreground mx-auto mb-1.5" />
+                  <p className="text-sm font-medium text-foreground">
+                    Drag & drop files here, or <span className="text-primary">browse</span>
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">PDF, DOC, DOCX, XLS, XLSX</p>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    multiple
+                    accept=".pdf,.doc,.docx,.xlsx,.xls"
+                    className="hidden"
+                    onChange={(e) => {
+                      if (e.target.files) handleFileDrop(e.target.files);
                     }}
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    <UploadCloud className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-sm font-medium text-foreground">
-                      Drag & drop a file here, or <span className="text-primary">browse</span>
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">PDF, DOC, DOCX, XLS, XLSX</p>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept=".pdf,.doc,.docx,.xlsx,.xls"
-                      className="hidden"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) setUploadFileName(file.name);
-                      }}
-                    />
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2 rounded-lg border bg-muted/30 px-3 py-2">
-                    <FileText className="h-4 w-4 text-primary shrink-0" />
-                    <span className="text-sm font-medium text-foreground truncate flex-1">{uploadFileName}</span>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-6 w-6 text-muted-foreground hover:text-destructive"
-                      onClick={() => {
-                        setUploadFileName("");
-                        if (fileInputRef.current) fileInputRef.current.value = "";
-                      }}
-                    >
-                      <X className="h-3.5 w-3.5" />
-                    </Button>
+                  />
+                </div>
+                {/* File list */}
+                {uploadFileNames.length > 0 && (
+                  <div className="space-y-1.5 max-h-32 overflow-y-auto">
+                    {uploadFileNames.map((name, i) => (
+                      <div key={i} className="flex items-center gap-2 rounded-md border bg-muted/30 px-3 py-1.5">
+                        <FileText className="h-3.5 w-3.5 text-primary shrink-0" />
+                        <span className="text-sm text-foreground truncate flex-1">{name}</span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-5 w-5 text-muted-foreground hover:text-destructive"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setUploadFileNames((prev) => prev.filter((_, idx) => idx !== i));
+                          }}
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
@@ -312,11 +328,11 @@ export default function KnowledgeBase() {
                 </DialogClose>
                 <Button
                   onClick={handleUpload}
-                  disabled={!uploadBrand || !uploadCategory || !uploadFileType || !uploadFileName}
+                  disabled={!uploadBrand || !uploadCategory || !uploadFileType || uploadFileNames.length === 0}
                   className="gap-2"
                 >
                   <Upload className="h-4 w-4" />
-                  Upload
+                  Upload {uploadFileNames.length > 1 ? `${uploadFileNames.length} Files` : ""}
                 </Button>
               </div>
             </div>
