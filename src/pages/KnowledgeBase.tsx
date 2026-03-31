@@ -506,6 +506,8 @@ export default function KnowledgeBase() {
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
+      </AlertDialog>
+
       {/* Document Preview Panel */}
       <Sheet open={!!previewDoc} onOpenChange={(open) => !open && setPreviewDoc(null)}>
         <SheetContent side="right" className="sm:max-w-md overflow-y-auto">
