@@ -87,6 +87,13 @@ export default function KnowledgeBase() {
     return sortDir === "asc" ? cmp : -cmp;
   });
 
+  // Pagination
+  const pageSize = 8;
+  const [page, setPage] = useState(1);
+  const totalPages = Math.max(1, Math.ceil(sortedDocs.length / pageSize));
+  const currentPage = Math.min(page, totalPages);
+  const paginatedDocs = sortedDocs.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
   const filterCategories = filterBrand !== "all" ? categoryMap[filterBrand] || [] : [];
 
   const handleUpload = () => {
