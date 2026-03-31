@@ -307,6 +307,7 @@ export default function KnowledgeBase() {
               <TableHead className="cursor-pointer select-none" onClick={() => toggleSort("uploadedDate")}>
                 <span className="inline-flex items-center">Date{sortIcon("uploadedDate")}</span>
               </TableHead>
+              </TableHead>
               <TableHead className="w-[100px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
