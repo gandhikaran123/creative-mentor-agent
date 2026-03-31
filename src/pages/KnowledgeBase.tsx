@@ -16,6 +16,7 @@ import {
   getDocuments,
   addDocument,
   deleteDocument,
+  updateDocument,
   type FileType,
   type KnowledgeDocument,
 } from "@/data/knowledgeData";
