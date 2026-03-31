@@ -282,14 +282,14 @@ export default function KnowledgeBase() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredDocs.length === 0 ? (
+            {sortedDocs.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="text-center text-muted-foreground py-10">
                   No documents found.
                 </TableCell>
               </TableRow>
             ) : (
-              filteredDocs.map((doc) => (
+              sortedDocs.map((doc) => (
                 <TableRow key={doc.id}>
                   <TableCell className="font-medium flex items-center gap-2">
                     <FileText className="h-4 w-4 text-muted-foreground shrink-0" />
