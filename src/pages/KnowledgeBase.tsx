@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Trash2, FileText, Upload, Pencil, ArrowUpDown, ArrowUp, ArrowDown, Search } from "lucide-react";
+import { Plus, Trash2, FileText, Upload, Pencil, ArrowUpDown, ArrowUp, ArrowDown, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -86,6 +86,13 @@ export default function KnowledgeBase() {
     const cmp = aVal.localeCompare(bVal);
     return sortDir === "asc" ? cmp : -cmp;
   });
+
+  // Pagination
+  const pageSize = 8;
+  const [page, setPage] = useState(1);
+  const totalPages = Math.max(1, Math.ceil(sortedDocs.length / pageSize));
+  const currentPage = Math.min(page, totalPages);
+  const paginatedDocs = sortedDocs.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const filterCategories = filterBrand !== "all" ? categoryMap[filterBrand] || [] : [];
 
@@ -228,14 +235,14 @@ export default function KnowledgeBase() {
           <Input
             placeholder="Search by file name…"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }}
             className="pl-9"
           />
         </div>
         <div className="grid grid-cols-3 gap-4">
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Brand</label>
-            <Select value={filterBrand} onValueChange={(v) => { setFilterBrand(v); setFilterCategory("all"); }}>
+            <Select value={filterBrand} onValueChange={(v) => { setFilterBrand(v); setFilterCategory("all"); setPage(1); }}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Brands</SelectItem>
@@ -245,7 +252,7 @@ export default function KnowledgeBase() {
           </div>
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Category</label>
-            <Select value={filterCategory} onValueChange={setFilterCategory} disabled={filterBrand === "all"}>
+            <Select value={filterCategory} onValueChange={(v) => { setFilterCategory(v); setPage(1); }} disabled={filterBrand === "all"}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
@@ -255,7 +262,7 @@ export default function KnowledgeBase() {
           </div>
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">File Type</label>
-            <Select value={filterType} onValueChange={setFilterType}>
+            <Select value={filterType} onValueChange={(v) => { setFilterType(v); setPage(1); }}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Types</SelectItem>
@@ -293,14 +300,14 @@ export default function KnowledgeBase() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedDocs.length === 0 ? (
+            {paginatedDocs.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="text-center text-muted-foreground py-10">
                   No documents found.
                 </TableCell>
               </TableRow>
             ) : (
-              sortedDocs.map((doc) => (
+              paginatedDocs.map((doc) => (
                 <TableRow key={doc.id}>
                   <TableCell className="font-medium flex items-center gap-2">
                     <FileText className="h-4 w-4 text-muted-foreground shrink-0" />
@@ -332,7 +339,22 @@ export default function KnowledgeBase() {
         </Table>
       </Card>
 
-      <p className="text-xs text-muted-foreground">{sortedDocs.length} document{sortedDocs.length !== 1 ? "s" : ""}</p>
+      <div className="flex items-center justify-between">
+        <p className="text-xs text-muted-foreground">{sortedDocs.length} document{sortedDocs.length !== 1 ? "s" : ""}</p>
+        {totalPages > 1 && (
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="icon" className="h-8 w-8" disabled={currentPage <= 1} onClick={() => setPage(currentPage - 1)}>
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <span className="text-xs text-muted-foreground tabular-nums">
+              Page {currentPage} of {totalPages}
+            </span>
+            <Button variant="outline" size="icon" className="h-8 w-8" disabled={currentPage >= totalPages} onClick={() => setPage(currentPage + 1)}>
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
+      </div>
 
       {/* Edit Dialog */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
