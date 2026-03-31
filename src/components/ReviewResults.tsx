@@ -2,7 +2,6 @@ import { AlertTriangle, CheckCircle2, Info, Lightbulb, XCircle } from "lucide-re
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
 
 const dummyResults = {
   overallScore: 78,
@@ -86,13 +85,13 @@ export function ReviewResults() {
     <div className="space-y-6 animate-fade-in">
       {/* Overall Score */}
       <Card className="p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold">Review Results</h3>
+        <div className="flex items-center justify-between mb-5">
+          <h3 className="text-lg font-semibold text-foreground">Review Results</h3>
           <Badge variant="outline" className="text-xs">
             Just now
           </Badge>
         </div>
-        <div className="flex items-center gap-6 mb-4">
+        <div className="flex items-start gap-8 mb-4">
           <div className="flex flex-col items-center">
             <span className={`text-5xl font-bold tabular-nums ${scoreColor(dummyResults.overallScore)}`}>
               {dummyResults.overallScore}
@@ -100,10 +99,10 @@ export function ReviewResults() {
             <span className="text-xs text-muted-foreground mt-1">/ 100</span>
           </div>
           <div className="flex-1">
-            <p className="text-sm text-muted-foreground mb-3">{dummyResults.summary}</p>
-            <div className="grid grid-cols-2 gap-3">
+            <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{dummyResults.summary}</p>
+            <div className="grid grid-cols-2 gap-4">
               {dummyResults.categories.map((cat) => (
-                <div key={cat.name} className="space-y-1">
+                <div key={cat.name} className="space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-muted-foreground">{cat.name}</span>
                     <span className={`font-medium ${scoreColor(cat.score)}`}>{cat.score}</span>
@@ -118,21 +117,21 @@ export function ReviewResults() {
 
       {/* Issues */}
       <Card className="p-6">
-        <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
+        <h3 className="text-sm font-semibold mb-4 flex items-center gap-2 text-foreground">
           <AlertTriangle className="h-4 w-4" />
           Issues Found ({dummyResults.issues.length})
         </h3>
         <div className="space-y-3">
           {dummyResults.issues.map((issue, i) => (
-            <div key={i} className="flex gap-3 p-3 rounded-lg bg-secondary/50">
+            <div key={i} className="flex gap-3 p-4 rounded-lg bg-secondary/50 border border-border/50">
               {severityIcon(issue.severity)}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-sm font-medium">{issue.title}</span>
+                  <span className="text-sm font-medium text-foreground">{issue.title}</span>
                   {severityBadge(issue.severity)}
                 </div>
-                <p className="text-xs text-muted-foreground mb-1">{issue.description}</p>
-                <span className="text-[10px] text-muted-foreground font-mono">{issue.rule}</span>
+                <p className="text-xs text-muted-foreground mb-1.5 leading-relaxed">{issue.description}</p>
+                <span className="text-[10px] text-muted-foreground/70 font-mono">{issue.rule}</span>
               </div>
             </div>
           ))}
@@ -141,15 +140,15 @@ export function ReviewResults() {
 
       {/* Suggestions */}
       <Card className="p-6">
-        <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
+        <h3 className="text-sm font-semibold mb-4 flex items-center gap-2 text-foreground">
           <Lightbulb className="h-4 w-4" />
           Suggestions
         </h3>
-        <div className="space-y-2">
+        <div className="space-y-3">
           {dummyResults.suggestions.map((suggestion, i) => (
             <div key={i} className="flex gap-3 items-start text-sm">
               <CheckCircle2 className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
-              <span className="text-muted-foreground">{suggestion}</span>
+              <span className="text-muted-foreground leading-relaxed">{suggestion}</span>
             </div>
           ))}
         </div>

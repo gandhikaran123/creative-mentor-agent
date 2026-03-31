@@ -28,28 +28,28 @@ const knowledgeSources = [
 
 export function KnowledgePanel() {
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <h3 className="text-sm font-medium text-foreground">Loaded Knowledge</h3>
-      <div className="space-y-2">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {knowledgeSources.map((source) => (
-          <Card key={source.title} className="p-3">
-            <div className="flex items-start gap-3">
-              <div className="rounded-md bg-secondary p-1.5">
-                <source.icon className="h-4 w-4 text-muted-foreground" />
+          <Card key={source.title} className="p-5 hover:shadow-sm transition-shadow">
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <div className="rounded-lg bg-accent p-2">
+                  <source.icon className="h-4 w-4 text-accent-foreground" />
+                </div>
+                <CheckCircle2 className="h-4 w-4 text-success" />
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-sm font-medium">{source.title}</span>
-                  <CheckCircle2 className="h-3.5 w-3.5 text-success" />
-                </div>
-                <p className="text-xs text-muted-foreground mb-2">{source.description}</p>
-                <div className="flex flex-wrap gap-1">
-                  {source.items.map((item) => (
-                    <Badge key={item} variant="secondary" className="text-[10px] font-normal">
-                      {item}
-                    </Badge>
-                  ))}
-                </div>
+              <div>
+                <h4 className="text-sm font-medium text-foreground">{source.title}</h4>
+                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{source.description}</p>
+              </div>
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {source.items.map((item) => (
+                  <Badge key={item} variant="secondary" className="text-[10px] font-normal">
+                    {item}
+                  </Badge>
+                ))}
               </div>
             </div>
           </Card>

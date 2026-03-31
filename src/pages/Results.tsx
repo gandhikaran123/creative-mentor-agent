@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -22,15 +21,15 @@ const reviews = [
 ];
 
 const statusConfig: Record<string, { label: string; className: string }> = {
-  approved: { label: "Approved", className: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" },
-  needs_changes: { label: "Needs Changes", className: "bg-amber-500/10 text-amber-600 border-amber-500/20" },
-  rejected: { label: "Rejected", className: "bg-red-500/10 text-red-600 border-red-500/20" },
+  approved: { label: "Approved", className: "bg-[hsl(142,71%,45%,0.1)] text-success border-[hsl(142,71%,45%,0.2)]" },
+  needs_changes: { label: "Needs Changes", className: "bg-[hsl(38,92%,50%,0.1)] text-warning border-[hsl(38,92%,50%,0.2)]" },
+  rejected: { label: "Rejected", className: "bg-destructive/10 text-destructive border-destructive/20" },
 };
 
 function scoreColor(score: number) {
-  if (score >= 85) return "text-emerald-600";
-  if (score >= 60) return "text-amber-600";
-  return "text-red-600";
+  if (score >= 85) return "text-success";
+  if (score >= 60) return "text-warning";
+  return "text-destructive";
 }
 
 function formatDate(iso: string) {
@@ -43,10 +42,10 @@ function formatDate(iso: string) {
 
 export default function Results() {
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-6">
+    <div className="p-8 max-w-5xl mx-auto space-y-8">
       <div>
-        <h1 className="text-xl font-semibold">Review History</h1>
-        <p className="text-sm text-muted-foreground mt-1">
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">Review History</h1>
+        <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
           Past creative reviews with scores, status, and details.
         </p>
       </div>
@@ -72,7 +71,7 @@ export default function Results() {
               return (
                 <TableRow key={r.id}>
                   <TableCell className="font-mono text-xs text-muted-foreground">{r.id}</TableCell>
-                  <TableCell className="font-medium text-sm">{r.asset}</TableCell>
+                  <TableCell className="font-medium text-sm text-foreground">{r.asset}</TableCell>
                   <TableCell className="text-sm">{r.brand}</TableCell>
                   <TableCell className="text-sm text-muted-foreground">{r.category}</TableCell>
                   <TableCell className="text-center">
