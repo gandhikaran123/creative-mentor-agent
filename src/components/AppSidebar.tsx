@@ -1,6 +1,5 @@
-import { Upload, BarChart3, Settings, FileText, BookOpen, Sparkles, Command } from "lucide-react";
+import { Upload, BookOpen, Sparkles } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
-import { useLocation } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import {
   Sidebar,
@@ -12,7 +11,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarHeader,
-  SidebarFooter,
   useSidebar,
 } from "@/components/ui/sidebar";
 
@@ -21,20 +19,12 @@ const navGroups = [
     label: "Review",
     items: [
       { title: "New Review", url: "/", icon: Upload },
-      { title: "Review History", url: "/results", icon: BarChart3 },
     ],
   },
   {
     label: "Resources",
     items: [
       { title: "Knowledge Base", url: "/knowledge", icon: BookOpen },
-      { title: "Reports", url: "/reports", icon: FileText },
-    ],
-  },
-  {
-    label: "Manage",
-    items: [
-      { title: "Settings", url: "/settings", icon: Settings },
     ],
   },
 ];
@@ -90,18 +80,6 @@ export function AppSidebar() {
           </SidebarGroup>
         ))}
       </SidebarContent>
-
-      {!collapsed && (
-        <SidebarFooter className="border-t p-3">
-          <div className="flex items-center gap-2 rounded-lg bg-muted/50 px-3 py-2.5">
-            <Command className="h-3.5 w-3.5 text-muted-foreground" />
-            <span className="text-[11px] text-muted-foreground">Quick Actions</span>
-            <kbd className="ml-auto pointer-events-none inline-flex h-5 select-none items-center gap-0.5 rounded border bg-background px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
-              ⌘K
-            </kbd>
-          </div>
-        </SidebarFooter>
-      )}
     </Sidebar>
   );
 }

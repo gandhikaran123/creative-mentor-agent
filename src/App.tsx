@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppLayout } from "@/components/AppLayout";
 import Index from "./pages/Index.tsx";
-import Results from "./pages/Results.tsx";
+import KnowledgeBase from "./pages/KnowledgeBase.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -19,7 +19,7 @@ const App = () => (
         <AppLayout>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/results" element={<Results />} />
+            <Route path="/knowledge" element={<KnowledgeBase />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AppLayout>
