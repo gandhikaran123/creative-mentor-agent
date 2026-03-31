@@ -222,9 +222,17 @@ export default function KnowledgeBase() {
       <Separator />
 
       {/* Filters */}
-      <Card className="p-4">
+      <Card className="p-4 space-y-4">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search by file name…"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9"
+          />
+        </div>
         <div className="grid grid-cols-3 gap-4">
-          <div className="space-y-1.5">
             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Brand</label>
             <Select value={filterBrand} onValueChange={(v) => { setFilterBrand(v); setFilterCategory("all"); }}>
               <SelectTrigger><SelectValue /></SelectTrigger>
