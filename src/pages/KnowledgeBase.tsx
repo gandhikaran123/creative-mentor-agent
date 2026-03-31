@@ -524,7 +524,7 @@ export default function KnowledgeBase() {
                       className="font-medium flex items-center gap-2 hover:text-primary transition-colors text-left"
                     >
                       <FileText className="h-4 w-4 text-muted-foreground shrink-0" />
-                      <span className="underline-offset-2 hover:underline">{doc.fileName}</span>
+                      <span className="underline-offset-2 hover:underline">{highlightMatch(doc.fileName, searchQuery)}</span>
                     </button>
                   </TableCell>
                   <TableCell>
