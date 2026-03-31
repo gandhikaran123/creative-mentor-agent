@@ -56,19 +56,25 @@ export default function KnowledgeBase() {
   const dragCounterRef = useRef(0);
 
   const acceptedExtensions = [".pdf", ".doc", ".docx", ".xlsx", ".xls"];
+  const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
   const isAcceptedFile = (file: File) =>
     acceptedExtensions.some((ext) => file.name.toLowerCase().endsWith(ext));
 
   const handleFileDrop = useCallback((files: FileList | null) => {
     if (!files || files.length === 0) return;
     const validFiles: string[] = [];
-    const invalidFiles: string[] = [];
+    const invalidType: string[] = [];
+    const oversized: string[] = [];
     Array.from(files).forEach((file) => {
-      if (isAcceptedFile(file)) validFiles.push(file.name);
-      else invalidFiles.push(file.name);
+      if (!isAcceptedFile(file)) { invalidType.push(file.name); return; }
+      if (file.size > MAX_FILE_SIZE) { oversized.push(file.name); return; }
+      validFiles.push(file.name);
     });
-    if (invalidFiles.length > 0) {
-      toast({ title: "Some files skipped", description: `${invalidFiles.length} file(s) had unsupported types (PDF, DOC, DOCX, XLS, XLSX only).`, variant: "destructive" });
+    if (oversized.length > 0) {
+      toast({ title: "Files too large", description: `${oversized.length} file(s) exceed the 20 MB limit: ${oversized.join(", ")}`, variant: "destructive" });
+    }
+    if (invalidType.length > 0) {
+      toast({ title: "Unsupported files", description: `${invalidType.length} file(s) had unsupported types (PDF, DOC, DOCX, XLS, XLSX only).`, variant: "destructive" });
     }
     if (validFiles.length > 0) {
       setUploadFileNames((prev) => [...prev, ...validFiles]);
