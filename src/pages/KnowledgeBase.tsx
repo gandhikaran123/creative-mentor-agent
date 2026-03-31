@@ -30,6 +30,7 @@ const fileTypeBadgeClass: Record<FileType, string> = {
 };
 
 export default function KnowledgeBase() {
+  const { toast } = useToast();
   const [docs, setDocs] = useState<KnowledgeDocument[]>(getDocuments());
   const [filterBrand, setFilterBrand] = useState("all");
   const [filterCategory, setFilterCategory] = useState("all");
