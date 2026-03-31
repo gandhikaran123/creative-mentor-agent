@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Trash2, FileText, Upload, Pencil, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { Plus, Trash2, FileText, Upload, Pencil, ArrowUpDown, ArrowUp, ArrowDown, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -35,6 +35,7 @@ export default function KnowledgeBase() {
   const [filterBrand, setFilterBrand] = useState("all");
   const [filterCategory, setFilterCategory] = useState("all");
   const [filterType, setFilterType] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Upload form state
   const [uploadBrand, setUploadBrand] = useState("");
@@ -74,6 +75,7 @@ export default function KnowledgeBase() {
     if (filterBrand !== "all" && d.brand !== filterBrand) return false;
     if (filterCategory !== "all" && d.category !== filterCategory) return false;
     if (filterType !== "all" && d.fileType !== filterType) return false;
+    if (searchQuery && !d.fileName.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     return true;
   });
 
@@ -220,7 +222,16 @@ export default function KnowledgeBase() {
       <Separator />
 
       {/* Filters */}
-      <Card className="p-4">
+      <Card className="p-4 space-y-4">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search by file name…"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9"
+          />
+        </div>
         <div className="grid grid-cols-3 gap-4">
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Brand</label>
