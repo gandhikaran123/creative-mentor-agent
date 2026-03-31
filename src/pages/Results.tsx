@@ -52,10 +52,10 @@ export default function Results() {
 
       <Separator />
 
-      <Card>
+      <Card className="overflow-hidden">
         <Table>
           <TableHeader>
-            <TableRow>
+            <TableRow className="hover:bg-transparent">
               <TableHead className="w-[100px]">ID</TableHead>
               <TableHead>Asset</TableHead>
               <TableHead>Brand</TableHead>
@@ -69,7 +69,7 @@ export default function Results() {
             {reviews.map((r) => {
               const status = statusConfig[r.status];
               return (
-                <TableRow key={r.id}>
+                <TableRow key={r.id} className="cursor-pointer transition-colors">
                   <TableCell className="font-mono text-xs text-muted-foreground">{r.id}</TableCell>
                   <TableCell className="font-medium text-sm text-foreground">{r.asset}</TableCell>
                   <TableCell className="text-sm">{r.brand}</TableCell>

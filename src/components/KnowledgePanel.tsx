@@ -32,10 +32,10 @@ export function KnowledgePanel() {
       <h3 className="text-sm font-medium text-foreground">Loaded Knowledge</h3>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {knowledgeSources.map((source) => (
-          <Card key={source.title} className="p-5 hover:shadow-sm transition-shadow">
+          <Card key={source.title} className="p-5 card-hover">
             <div className="flex flex-col gap-3">
               <div className="flex items-center justify-between">
-                <div className="rounded-lg bg-accent p-2">
+                <div className="rounded-lg bg-accent p-2.5">
                   <source.icon className="h-4 w-4 text-accent-foreground" />
                 </div>
                 <CheckCircle2 className="h-4 w-4 text-success" />
