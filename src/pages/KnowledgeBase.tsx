@@ -271,6 +271,58 @@ export default function KnowledgeBase() {
       </Card>
 
       <p className="text-xs text-muted-foreground">{filteredDocs.length} document{filteredDocs.length !== 1 ? "s" : ""}</p>
+
+      {/* Edit Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Document</DialogTitle>
+          </DialogHeader>
+          {editDoc && (
+            <div className="space-y-4 pt-2">
+              <div className="space-y-1">
+                <label className="text-xs text-muted-foreground">File</label>
+                <p className="text-sm font-medium text-foreground">{editDoc.fileName}</p>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">Brand</label>
+                <Select value={editBrand} onValueChange={(v) => { setEditBrand(v); setEditCategory(""); }}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {brands.map((b) => <SelectItem key={b} value={b}>{b}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">Category</label>
+                <Select value={editCategory} onValueChange={setEditCategory} disabled={!editBrand}>
+                  <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
+                  <SelectContent>
+                    {(categoryMap[editBrand] || []).map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">File Type</label>
+                <Select value={editFileType} onValueChange={(v) => setEditFileType(v as FileType)}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {fileTypes.map((ft) => <SelectItem key={ft} value={ft}>{fileTypeLabels[ft]}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex justify-end gap-2 pt-2">
+                <DialogClose asChild>
+                  <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button onClick={handleEdit} disabled={!editBrand || !editCategory || !editFileType}>
+                  Save Changes
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
