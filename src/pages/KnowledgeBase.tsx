@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
@@ -36,6 +37,8 @@ export default function KnowledgeBase() {
   const [filterCategory, setFilterCategory] = useState("all");
   const [filterType, setFilterType] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
 
   // Upload form state
   const [uploadBrand, setUploadBrand] = useState("");
@@ -273,11 +276,33 @@ export default function KnowledgeBase() {
         </div>
       </Card>
 
-      {/* Table */}
+      {/* Bulk actions & Table */}
+      {selectedIds.size > 0 && (
+        <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 border">
+          <span className="text-sm text-muted-foreground">{selectedIds.size} selected</span>
+          <Button variant="destructive" size="sm" className="gap-1.5" onClick={() => setBulkDeleteOpen(true)}>
+            <Trash2 className="h-3.5 w-3.5" />
+            Delete Selected
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => setSelectedIds(new Set())}>
+            Clear
+          </Button>
+        </div>
+      )}
       <Card>
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-[40px]">
+                <Checkbox
+                  checked={paginatedDocs.length > 0 && paginatedDocs.every((d) => selectedIds.has(d.id))}
+                  onCheckedChange={(checked) => {
+                    const next = new Set(selectedIds);
+                    paginatedDocs.forEach((d) => checked ? next.add(d.id) : next.delete(d.id));
+                    setSelectedIds(next);
+                  }}
+                />
+              </TableHead>
               <TableHead className="cursor-pointer select-none" onClick={() => toggleSort("fileName")}>
                 <span className="inline-flex items-center">File Name{sortIcon("fileName")}</span>
               </TableHead>
@@ -302,13 +327,23 @@ export default function KnowledgeBase() {
           <TableBody>
             {paginatedDocs.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center text-muted-foreground py-10">
+                <TableCell colSpan={8} className="text-center text-muted-foreground py-10">
                   No documents found.
                 </TableCell>
               </TableRow>
             ) : (
               paginatedDocs.map((doc) => (
-                <TableRow key={doc.id}>
+                <TableRow key={doc.id} className={selectedIds.has(doc.id) ? "bg-muted/50" : ""}>
+                  <TableCell>
+                    <Checkbox
+                      checked={selectedIds.has(doc.id)}
+                      onCheckedChange={(checked) => {
+                        const next = new Set(selectedIds);
+                        checked ? next.add(doc.id) : next.delete(doc.id);
+                        setSelectedIds(next);
+                      }}
+                    />
+                  </TableCell>
                   <TableCell className="font-medium flex items-center gap-2">
                     <FileText className="h-4 w-4 text-muted-foreground shrink-0" />
                     {doc.fileName}
@@ -421,6 +456,34 @@ export default function KnowledgeBase() {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
               Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Bulk Delete Confirmation */}
+      <AlertDialog open={bulkDeleteOpen} onOpenChange={setBulkDeleteOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete {selectedIds.size} Documents</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete {selectedIds.size} selected document{selectedIds.size !== 1 ? "s" : ""}? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                const count = selectedIds.size;
+                selectedIds.forEach((id) => deleteDocument(id));
+                setDocs(getDocuments());
+                setSelectedIds(new Set());
+                setBulkDeleteOpen(false);
+                toast({ title: "Documents deleted", description: `${count} document${count !== 1 ? "s" : ""} removed.` });
+              }}
+            >
+              Delete All
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
