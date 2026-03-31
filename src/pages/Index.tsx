@@ -1,11 +1,11 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { Play, ImageIcon, X, FileText, Shield, BookOpen, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { ReviewResults } from "@/components/ReviewResults";
 import {
   brands,
   categoryMap,
@@ -28,12 +28,11 @@ interface UploadedImage {
 }
 
 export default function Index() {
+  const navigate = useNavigate();
   const [brand, setBrand] = useState("");
   const [category, setCategory] = useState("");
   const [frontImage, setFrontImage] = useState<UploadedImage | null>(null);
   const [backImage, setBackImage] = useState<UploadedImage | null>(null);
-  const [isReviewing, setIsReviewing] = useState(false);
-  const [showResults, setShowResults] = useState(false);
 
   const frontRef = useRef<HTMLInputElement>(null);
   const backRef = useRef<HTMLInputElement>(null);
@@ -50,16 +49,14 @@ export default function Index() {
     const file = e.target.files?.[0];
     if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
       setter({ name: file.name, url: URL.createObjectURL(file) });
-      setShowResults(false);
     }
   };
 
   const handleRunReview = () => {
-    setIsReviewing(true);
-    setTimeout(() => {
-      setIsReviewing(false);
-      setShowResults(true);
-    }, 1500);
+    if (!frontImage || !backImage) return;
+    navigate("/results", {
+      state: { frontImage, backImage, brand, category },
+    });
   };
 
   const canRunReview = brand && category && frontImage && backImage;
@@ -79,7 +76,7 @@ export default function Index() {
       <div className="grid grid-cols-2 gap-6">
         <div className="space-y-2">
           <label className="text-sm font-medium text-foreground">Brand</label>
-          <Select value={brand} onValueChange={(v) => { setBrand(v); setCategory(""); setShowResults(false); }}>
+          <Select value={brand} onValueChange={(v) => { setBrand(v); setCategory(""); }}>
             <SelectTrigger><SelectValue placeholder="Select brand" /></SelectTrigger>
             <SelectContent>
               {brands.map((b) => <SelectItem key={b} value={b}>{b}</SelectItem>)}
@@ -88,7 +85,7 @@ export default function Index() {
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium text-foreground">Category</label>
-          <Select value={category} onValueChange={(v) => { setCategory(v); setShowResults(false); }} disabled={!brand}>
+          <Select value={category} onValueChange={setCategory} disabled={!brand}>
             <SelectTrigger><SelectValue placeholder={brand ? "Select category" : "Select brand first"} /></SelectTrigger>
             <SelectContent>
               {categories.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
@@ -159,7 +156,7 @@ export default function Index() {
                 <img src={frontImage.url} alt="Front preview" className="w-full h-40 object-cover" />
                 <div className="p-3 flex items-center justify-between">
                   <p className="text-xs font-medium text-foreground truncate">{frontImage.name}</p>
-                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => { setFrontImage(null); setShowResults(false); }}>
+                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setFrontImage(null)}>
                     <X className="h-3.5 w-3.5" />
                   </Button>
                 </div>
@@ -191,7 +188,7 @@ export default function Index() {
                 <img src={backImage.url} alt="Back preview" className="w-full h-40 object-cover" />
                 <div className="p-3 flex items-center justify-between">
                   <p className="text-xs font-medium text-foreground truncate">{backImage.name}</p>
-                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => { setBackImage(null); setShowResults(false); }}>
+                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setBackImage(null)}>
                     <X className="h-3.5 w-3.5" />
                   </Button>
                 </div>
@@ -216,19 +213,11 @@ export default function Index() {
 
       {/* Run Review */}
       <div className="flex justify-end">
-        <Button onClick={handleRunReview} disabled={!canRunReview || isReviewing} className="gap-2 px-6">
+        <Button onClick={handleRunReview} disabled={!canRunReview} className="gap-2 px-6">
           <Play className="h-4 w-4" />
-          {isReviewing ? "Reviewing…" : "Run Review"}
+          Run Review
         </Button>
       </div>
-
-      {/* Results */}
-      {showResults && (
-        <>
-          <Separator />
-          <ReviewResults />
-        </>
-      )}
     </div>
   );
 }
