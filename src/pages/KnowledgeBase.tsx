@@ -35,6 +35,7 @@ export default function KnowledgeBase() {
   const [filterBrand, setFilterBrand] = useState("all");
   const [filterCategory, setFilterCategory] = useState("all");
   const [filterType, setFilterType] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Upload form state
   const [uploadBrand, setUploadBrand] = useState("");
