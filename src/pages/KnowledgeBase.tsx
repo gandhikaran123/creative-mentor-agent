@@ -235,7 +235,7 @@ export default function KnowledgeBase() {
           <Input
             placeholder="Search by file name…"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }}
             className="pl-9"
           />
         </div>
