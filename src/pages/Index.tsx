@@ -42,10 +42,10 @@ export default function Index() {
   const canRunReview = uploadedFile && brand && category;
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
+    <div className="p-8 max-w-4xl mx-auto space-y-8">
       <div>
-        <h1 className="text-xl font-semibold">New Creative Review</h1>
-        <p className="text-sm text-muted-foreground mt-1">
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">New Creative Review</h1>
+        <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
           Upload a creative asset and run an automated compliance and brand review.
         </p>
       </div>
@@ -54,18 +54,18 @@ export default function Index() {
 
       {/* Upload */}
       <Card
-        className="border-dashed"
+        className="border-dashed border-2"
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleDrop}
       >
         {uploadedFile ? (
-          <div className="p-4 flex items-center gap-3">
-            <div className="h-16 w-16 rounded-md bg-secondary flex items-center justify-center">
-              <ImageIcon className="h-6 w-6 text-muted-foreground" />
+          <div className="p-5 flex items-center gap-4">
+            <div className="h-16 w-16 rounded-lg bg-accent flex items-center justify-center">
+              <ImageIcon className="h-6 w-6 text-accent-foreground" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-medium">{uploadedFile}</p>
-              <p className="text-xs text-muted-foreground">Image • Ready for review</p>
+              <p className="text-sm font-medium text-foreground">{uploadedFile}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">Image • Ready for review</p>
             </div>
             <Button
               variant="ghost"
@@ -81,14 +81,14 @@ export default function Index() {
         ) : (
           <button
             onClick={handleFileSelect}
-            className="w-full p-8 flex flex-col items-center gap-3 text-center cursor-pointer hover:bg-accent/50 transition-colors rounded-lg"
+            className="w-full p-10 flex flex-col items-center gap-4 text-center cursor-pointer hover:bg-accent/50 transition-colors rounded-lg"
           >
-            <div className="rounded-full bg-secondary p-3">
-              <Upload className="h-5 w-5 text-muted-foreground" />
+            <div className="rounded-full bg-accent p-4">
+              <Upload className="h-5 w-5 text-accent-foreground" />
             </div>
             <div>
-              <p className="text-sm font-medium">Upload creative asset</p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-sm font-medium text-foreground">Upload creative asset</p>
+              <p className="text-xs text-muted-foreground mt-1">
                 Drag & drop or click to browse • PNG, JPG, WebP
               </p>
             </div>
@@ -97,9 +97,9 @@ export default function Index() {
       </Card>
 
       {/* Brand & Category */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-6">
         <div className="space-y-2">
-          <label className="text-sm font-medium">Brand</label>
+          <label className="text-sm font-medium text-foreground">Brand</label>
           <Select value={brand} onValueChange={setBrand}>
             <SelectTrigger>
               <SelectValue placeholder="Select brand" />
@@ -112,7 +112,7 @@ export default function Index() {
           </Select>
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-medium">Category</label>
+          <label className="text-sm font-medium text-foreground">Category</label>
           <Select value={category} onValueChange={setCategory}>
             <SelectTrigger>
               <SelectValue placeholder="Select category" />
@@ -134,7 +134,7 @@ export default function Index() {
         <Button
           onClick={handleRunReview}
           disabled={!canRunReview || isReviewing}
-          className="gap-2"
+          className="gap-2 px-6"
         >
           <Play className="h-4 w-4" />
           {isReviewing ? "Reviewing…" : "Run Review"}
