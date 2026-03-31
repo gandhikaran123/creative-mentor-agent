@@ -46,7 +46,7 @@ export default function KnowledgeBase() {
   const [uploadBrand, setUploadBrand] = useState("");
   const [uploadCategory, setUploadCategory] = useState("");
   const [uploadFileType, setUploadFileType] = useState<FileType | "">("");
-  const [uploadFileName, setUploadFileName] = useState("");
+  const [uploadFileNames, setUploadFileNames] = useState<string[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
 
   // Drag-and-drop state
