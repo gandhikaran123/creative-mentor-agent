@@ -189,7 +189,7 @@ export default function Index() {
                 <img src={backImage.url} alt="Back preview" className="w-full h-40 object-cover" />
                 <div className="p-3 flex items-center justify-between">
                   <p className="text-xs font-medium text-foreground truncate">{backImage.name}</p>
-                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => { setBackImage(null); setShowResults(false); }}>
+                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setBackImage(null)}>
                     <X className="h-3.5 w-3.5" />
                   </Button>
                 </div>
