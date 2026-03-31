@@ -105,7 +105,7 @@ export function ReviewResults() {
                 <div key={cat.name} className="space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-muted-foreground">{cat.name}</span>
-                    <span className={`font-medium ${scoreColor(cat.score)}`}>{cat.score}</span>
+                    <span className={`font-medium tabular-nums ${scoreColor(cat.score)}`}>{cat.score}</span>
                   </div>
                   <Progress value={cat.score} className="h-1.5" />
                 </div>
@@ -123,7 +123,7 @@ export function ReviewResults() {
         </h3>
         <div className="space-y-3">
           {dummyResults.issues.map((issue, i) => (
-            <div key={i} className="flex gap-3 p-4 rounded-lg bg-secondary/50 border border-border/50">
+            <div key={i} className="flex gap-3 p-4 rounded-lg bg-muted/50 border border-border/50 transition-all duration-200 hover:bg-muted">
               {severityIcon(issue.severity)}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
@@ -131,7 +131,7 @@ export function ReviewResults() {
                   {severityBadge(issue.severity)}
                 </div>
                 <p className="text-xs text-muted-foreground mb-1.5 leading-relaxed">{issue.description}</p>
-                <span className="text-[10px] text-muted-foreground/70 font-mono">{issue.rule}</span>
+                <span className="text-[10px] text-muted-foreground/60 font-mono">{issue.rule}</span>
               </div>
             </div>
           ))}
@@ -146,8 +146,8 @@ export function ReviewResults() {
         </h3>
         <div className="space-y-3">
           {dummyResults.suggestions.map((suggestion, i) => (
-            <div key={i} className="flex gap-3 items-start text-sm">
-              <CheckCircle2 className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+            <div key={i} className="flex gap-3 items-start text-sm group">
+              <CheckCircle2 className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0 group-hover:text-primary transition-colors" />
               <span className="text-muted-foreground leading-relaxed">{suggestion}</span>
             </div>
           ))}
