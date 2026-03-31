@@ -155,6 +155,19 @@ export default function KnowledgeBase() {
 
   const filterCategories = filterBrand !== "all" ? categoryMap[filterBrand] || [] : [];
 
+  const highlightMatch = (text: string, query: string) => {
+    if (!query) return text;
+    const idx = text.toLowerCase().indexOf(query.toLowerCase());
+    if (idx === -1) return text;
+    return (
+      <>
+        {text.slice(0, idx)}
+        <mark className="bg-primary/20 text-foreground rounded-sm px-0.5">{text.slice(idx, idx + query.length)}</mark>
+        {text.slice(idx + query.length)}
+      </>
+    );
+  };
+
   // Upload progress
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -511,7 +524,7 @@ export default function KnowledgeBase() {
                       className="font-medium flex items-center gap-2 hover:text-primary transition-colors text-left"
                     >
                       <FileText className="h-4 w-4 text-muted-foreground shrink-0" />
-                      <span className="underline-offset-2 hover:underline">{doc.fileName}</span>
+                      <span className="underline-offset-2 hover:underline">{highlightMatch(doc.fileName, searchQuery)}</span>
                     </button>
                   </TableCell>
                   <TableCell>
