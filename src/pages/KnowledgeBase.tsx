@@ -358,9 +358,14 @@ export default function KnowledgeBase() {
                       }}
                     />
                   </TableCell>
-                  <TableCell className="font-medium flex items-center gap-2">
-                    <FileText className="h-4 w-4 text-muted-foreground shrink-0" />
-                    {doc.fileName}
+                  <TableCell>
+                    <button
+                      onClick={() => setPreviewDoc(doc)}
+                      className="font-medium flex items-center gap-2 hover:text-primary transition-colors text-left"
+                    >
+                      <FileText className="h-4 w-4 text-muted-foreground shrink-0" />
+                      <span className="underline-offset-2 hover:underline">{doc.fileName}</span>
+                    </button>
                   </TableCell>
                   <TableCell>
                     <Badge variant="secondary" className={fileTypeBadgeClass[doc.fileType]}>
