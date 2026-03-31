@@ -1,5 +1,5 @@
-import { useState, useRef, useCallback } from "react";
-import { Plus, Trash2, FileText, Upload, Pencil, ArrowUpDown, ArrowUp, ArrowDown, Search, ChevronLeft, ChevronRight, Calendar, User, Tag, FolderOpen, ExternalLink, UploadCloud, X } from "lucide-react";
+import { useState, useRef, useCallback, useEffect } from "react";
+import { Plus, Trash2, FileText, Upload, Pencil, ArrowUpDown, ArrowUp, ArrowDown, Search, ChevronLeft, ChevronRight, Calendar, User, Tag, FolderOpen, ExternalLink, UploadCloud, X, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
 import {
   brands,
   categoryMap,
@@ -154,11 +155,21 @@ export default function KnowledgeBase() {
 
   const filterCategories = filterBrand !== "all" ? categoryMap[filterBrand] || [] : [];
 
-  const handleUpload = () => {
+  // Upload progress
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+
+  const handleUpload = async () => {
     if (!uploadBrand || !uploadCategory || !uploadFileType || uploadFileNames.length === 0) return;
-    uploadFileNames.forEach((fileName) => {
+    setIsUploading(true);
+    setUploadProgress(0);
+
+    const total = uploadFileNames.length;
+    for (let i = 0; i < total; i++) {
+      // Simulate per-file upload delay
+      await new Promise((r) => setTimeout(r, 400 + Math.random() * 300));
       addDocument({
-        fileName,
+        fileName: uploadFileNames[i],
         fileType: uploadFileType as FileType,
         brand: uploadBrand,
         category: uploadCategory,
@@ -166,13 +177,17 @@ export default function KnowledgeBase() {
         uploadedDate: new Date().toISOString().split("T")[0],
         fileUrl: "#",
       });
-    });
+      setUploadProgress(Math.round(((i + 1) / total) * 100));
+    }
+
     setDocs(getDocuments());
-    const count = uploadFileNames.length;
+    const count = total;
     setUploadBrand("");
     setUploadCategory("");
     setUploadFileType("");
     setUploadFileNames([]);
+    setIsUploading(false);
+    setUploadProgress(0);
     setDialogOpen(false);
     toast({ title: `${count} document${count !== 1 ? "s" : ""} uploaded`, description: `Added to the knowledge base.` });
   };
@@ -328,17 +343,34 @@ export default function KnowledgeBase() {
                   </div>
                 )}
               </div>
+              {/* Upload progress */}
+              {isUploading && (
+                <div className="space-y-2 pt-1">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <span className="flex items-center gap-1.5">
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                      Uploading…
+                    </span>
+                    <span>{uploadProgress}%</span>
+                  </div>
+                  <Progress value={uploadProgress} className="h-2" />
+                </div>
+              )}
               <div className="flex justify-end gap-2 pt-2">
                 <DialogClose asChild>
-                  <Button variant="outline">Cancel</Button>
+                  <Button variant="outline" disabled={isUploading}>Cancel</Button>
                 </DialogClose>
                 <Button
                   onClick={handleUpload}
-                  disabled={!uploadBrand || !uploadCategory || !uploadFileType || uploadFileNames.length === 0}
+                  disabled={!uploadBrand || !uploadCategory || !uploadFileType || uploadFileNames.length === 0 || isUploading}
                   className="gap-2"
                 >
-                  <Upload className="h-4 w-4" />
-                  Upload {uploadFileNames.length > 1 ? `${uploadFileNames.length} Files` : ""}
+                  {isUploading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Upload className="h-4 w-4" />
+                  )}
+                  {isUploading ? "Uploading…" : uploadFileNames.length > 1 ? `Upload ${uploadFileNames.length} Files` : "Upload"}
                 </Button>
               </div>
             </div>
