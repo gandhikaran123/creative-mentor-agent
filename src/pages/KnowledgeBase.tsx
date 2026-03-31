@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Plus, Trash2, FileText, Upload, Pencil, ArrowUpDown, ArrowUp, ArrowDown, Search, ChevronLeft, ChevronRight, Calendar, User, Tag, FolderOpen, ExternalLink } from "lucide-react";
+import { useState, useRef, useCallback } from "react";
+import { Plus, Trash2, FileText, Upload, Pencil, ArrowUpDown, ArrowUp, ArrowDown, Search, ChevronLeft, ChevronRight, Calendar, User, Tag, FolderOpen, ExternalLink, UploadCloud, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
