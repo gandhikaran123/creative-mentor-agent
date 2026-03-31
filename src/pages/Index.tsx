@@ -1,16 +1,153 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState, useCallback } from "react";
+import { Upload, Play, ImageIcon, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { KnowledgePanel } from "@/components/KnowledgePanel";
+import { ReviewResults } from "@/components/ReviewResults";
 
-// IMPORTANT: Fully REPLACE this with your own code
-const PlaceholderIndex = () => {
-  // PLACEHOLDER: Replace this entire return statement with the user's app.
-  // The inline background color is intentionally not part of the design system.
+const brands = ["Acme Corp", "Nova Labs", "Orbit Media", "Peak Digital"];
+const categories = ["Social Media Ad", "Display Banner", "Email Header", "Landing Page Hero", "Product Photo"];
+
+export default function Index() {
+  const [uploadedFile, setUploadedFile] = useState<string | null>(null);
+  const [brand, setBrand] = useState("");
+  const [category, setCategory] = useState("");
+  const [isReviewing, setIsReviewing] = useState(false);
+  const [showResults, setShowResults] = useState(false);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file?.type.startsWith("image/")) {
+      setUploadedFile(file.name);
+      setShowResults(false);
+    }
+  }, []);
+
+  const handleFileSelect = () => {
+    setUploadedFile("summer-campaign-hero.png");
+    setShowResults(false);
+  };
+
+  const handleRunReview = () => {
+    setIsReviewing(true);
+    setTimeout(() => {
+      setIsReviewing(false);
+      setShowResults(true);
+    }, 1500);
+  };
+
+  const canRunReview = uploadedFile && brand && category;
+
   return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
+    <div className="p-6 max-w-4xl mx-auto space-y-6">
+      <div>
+        <h1 className="text-xl font-semibold">New Creative Review</h1>
+        <p className="text-sm text-muted-foreground mt-1">
+          Upload a creative asset and run an automated compliance and brand review.
+        </p>
+      </div>
+
+      <Separator />
+
+      {/* Upload */}
+      <Card
+        className="border-dashed"
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={handleDrop}
+      >
+        {uploadedFile ? (
+          <div className="p-4 flex items-center gap-3">
+            <div className="h-16 w-16 rounded-md bg-secondary flex items-center justify-center">
+              <ImageIcon className="h-6 w-6 text-muted-foreground" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium">{uploadedFile}</p>
+              <p className="text-xs text-muted-foreground">Image • Ready for review</p>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {
+                setUploadedFile(null);
+                setShowResults(false);
+              }}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        ) : (
+          <button
+            onClick={handleFileSelect}
+            className="w-full p-8 flex flex-col items-center gap-3 text-center cursor-pointer hover:bg-accent/50 transition-colors rounded-lg"
+          >
+            <div className="rounded-full bg-secondary p-3">
+              <Upload className="h-5 w-5 text-muted-foreground" />
+            </div>
+            <div>
+              <p className="text-sm font-medium">Upload creative asset</p>
+              <p className="text-xs text-muted-foreground">
+                Drag & drop or click to browse • PNG, JPG, WebP
+              </p>
+            </div>
+          </button>
+        )}
+      </Card>
+
+      {/* Brand & Category */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Brand</label>
+          <Select value={brand} onValueChange={setBrand}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select brand" />
+            </SelectTrigger>
+            <SelectContent>
+              {brands.map((b) => (
+                <SelectItem key={b} value={b}>{b}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Category</label>
+          <Select value={category} onValueChange={setCategory}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select category" />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map((c) => (
+                <SelectItem key={c} value={c}>{c}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      {/* Knowledge */}
+      <KnowledgePanel />
+
+      {/* Run Review */}
+      <div className="flex justify-end">
+        <Button
+          onClick={handleRunReview}
+          disabled={!canRunReview || isReviewing}
+          className="gap-2"
+        >
+          <Play className="h-4 w-4" />
+          {isReviewing ? "Reviewing…" : "Run Review"}
+        </Button>
+      </div>
+
+      {/* Results */}
+      {showResults && (
+        <>
+          <Separator />
+          <ReviewResults />
+        </>
+      )}
     </div>
   );
-};
-
-const Index = PlaceholderIndex;
-
-export default Index;
+}
