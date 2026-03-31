@@ -155,11 +155,21 @@ export default function KnowledgeBase() {
 
   const filterCategories = filterBrand !== "all" ? categoryMap[filterBrand] || [] : [];
 
-  const handleUpload = () => {
+  // Upload progress
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+
+  const handleUpload = async () => {
     if (!uploadBrand || !uploadCategory || !uploadFileType || uploadFileNames.length === 0) return;
-    uploadFileNames.forEach((fileName) => {
+    setIsUploading(true);
+    setUploadProgress(0);
+
+    const total = uploadFileNames.length;
+    for (let i = 0; i < total; i++) {
+      // Simulate per-file upload delay
+      await new Promise((r) => setTimeout(r, 400 + Math.random() * 300));
       addDocument({
-        fileName,
+        fileName: uploadFileNames[i],
         fileType: uploadFileType as FileType,
         brand: uploadBrand,
         category: uploadCategory,
@@ -167,13 +177,17 @@ export default function KnowledgeBase() {
         uploadedDate: new Date().toISOString().split("T")[0],
         fileUrl: "#",
       });
-    });
+      setUploadProgress(Math.round(((i + 1) / total) * 100));
+    }
+
     setDocs(getDocuments());
-    const count = uploadFileNames.length;
+    const count = total;
     setUploadBrand("");
     setUploadCategory("");
     setUploadFileType("");
     setUploadFileNames([]);
+    setIsUploading(false);
+    setUploadProgress(0);
     setDialogOpen(false);
     toast({ title: `${count} document${count !== 1 ? "s" : ""} uploaded`, description: `Added to the knowledge base.` });
   };
