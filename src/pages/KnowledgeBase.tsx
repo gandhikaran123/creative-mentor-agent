@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Plus, Trash2, FileText, Upload, Pencil } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -29,6 +30,7 @@ const fileTypeBadgeClass: Record<FileType, string> = {
 };
 
 export default function KnowledgeBase() {
+  const { toast } = useToast();
   const [docs, setDocs] = useState<KnowledgeDocument[]>(getDocuments());
   const [filterBrand, setFilterBrand] = useState("all");
   const [filterCategory, setFilterCategory] = useState("all");
@@ -74,15 +76,18 @@ export default function KnowledgeBase() {
     setUploadFileType("");
     setUploadFileName("");
     setDialogOpen(false);
+    toast({ title: "Document uploaded", description: uploadFileName + " has been added to the knowledge base." });
   };
 
   const [deleteTarget, setDeleteTarget] = useState<KnowledgeDocument | null>(null);
 
   const confirmDelete = () => {
     if (!deleteTarget) return;
+    const fileName = deleteTarget.fileName;
     deleteDocument(deleteTarget.id);
     setDocs(getDocuments());
     setDeleteTarget(null);
+    toast({ title: "Document deleted", description: fileName + " has been removed." });
   };
 
   const openEdit = (doc: KnowledgeDocument) => {
@@ -99,6 +104,7 @@ export default function KnowledgeBase() {
     setDocs(getDocuments());
     setEditDialogOpen(false);
     setEditDoc(null);
+    toast({ title: "Document updated", description: editDoc.fileName + " has been updated." });
   };
 
   return (
