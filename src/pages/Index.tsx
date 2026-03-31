@@ -55,11 +55,10 @@ export default function Index() {
   };
 
   const handleRunReview = () => {
-    setIsReviewing(true);
-    setTimeout(() => {
-      setIsReviewing(false);
-      setShowResults(true);
-    }, 1500);
+    if (!frontImage || !backImage) return;
+    navigate("/results", {
+      state: { frontImage, backImage, brand, category },
+    });
   };
 
   const canRunReview = brand && category && frontImage && backImage;
