@@ -321,7 +321,17 @@ export default function KnowledgeBase() {
               </TableRow>
             ) : (
               paginatedDocs.map((doc) => (
-                <TableRow key={doc.id}>
+                <TableRow key={doc.id} className={selectedIds.has(doc.id) ? "bg-muted/50" : ""}>
+                  <TableCell>
+                    <Checkbox
+                      checked={selectedIds.has(doc.id)}
+                      onCheckedChange={(checked) => {
+                        const next = new Set(selectedIds);
+                        checked ? next.add(doc.id) : next.delete(doc.id);
+                        setSelectedIds(next);
+                      }}
+                    />
+                  </TableCell>
                   <TableCell className="font-medium flex items-center gap-2">
                     <FileText className="h-4 w-4 text-muted-foreground shrink-0" />
                     {doc.fileName}
