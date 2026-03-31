@@ -76,9 +76,13 @@ export default function KnowledgeBase() {
     setDialogOpen(false);
   };
 
-  const handleDelete = (id: string) => {
-    deleteDocument(id);
+  const [deleteTarget, setDeleteTarget] = useState<KnowledgeDocument | null>(null);
+
+  const confirmDelete = () => {
+    if (!deleteTarget) return;
+    deleteDocument(deleteTarget.id);
     setDocs(getDocuments());
+    setDeleteTarget(null);
   };
 
   const openEdit = (doc: KnowledgeDocument) => {
