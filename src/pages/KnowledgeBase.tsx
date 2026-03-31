@@ -42,6 +42,13 @@ export default function KnowledgeBase() {
   const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
   const [previewDoc, setPreviewDoc] = useState<KnowledgeDocument | null>(null);
 
+  // Upload form state
+  const [uploadBrand, setUploadBrand] = useState("");
+  const [uploadCategory, setUploadCategory] = useState("");
+  const [uploadFileType, setUploadFileType] = useState<FileType | "">("");
+  const [uploadFileName, setUploadFileName] = useState("");
+  const [dialogOpen, setDialogOpen] = useState(false);
+
   // Drag-and-drop state
   const [isDraggingPage, setIsDraggingPage] = useState(false);
   const [isDraggingZone, setIsDraggingZone] = useState(false);
@@ -82,13 +89,6 @@ export default function KnowledgeBase() {
     setIsDraggingZone(false);
     handleFileDrop(e.dataTransfer.files);
   };
-
-  // Upload form state
-  const [uploadBrand, setUploadBrand] = useState("");
-  const [uploadCategory, setUploadCategory] = useState("");
-  const [uploadFileType, setUploadFileType] = useState<FileType | "">("");
-  const [uploadFileName, setUploadFileName] = useState("");
-  const [dialogOpen, setDialogOpen] = useState(false);
 
   // Edit form state
   const [editDoc, setEditDoc] = useState<KnowledgeDocument | null>(null);
