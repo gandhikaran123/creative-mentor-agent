@@ -157,7 +157,7 @@ export default function Index() {
                 <img src={frontImage.url} alt="Front preview" className="w-full h-40 object-cover" />
                 <div className="p-3 flex items-center justify-between">
                   <p className="text-xs font-medium text-foreground truncate">{frontImage.name}</p>
-                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => { setFrontImage(null); setShowResults(false); }}>
+                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setFrontImage(null)}>
                     <X className="h-3.5 w-3.5" />
                   </Button>
                 </div>
