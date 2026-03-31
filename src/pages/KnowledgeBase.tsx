@@ -80,6 +80,22 @@ export default function KnowledgeBase() {
     setDocs(getDocuments());
   };
 
+  const openEdit = (doc: KnowledgeDocument) => {
+    setEditDoc(doc);
+    setEditBrand(doc.brand);
+    setEditCategory(doc.category);
+    setEditFileType(doc.fileType);
+    setEditDialogOpen(true);
+  };
+
+  const handleEdit = () => {
+    if (!editDoc || !editBrand || !editCategory || !editFileType) return;
+    updateDocument(editDoc.id, { brand: editBrand, category: editCategory, fileType: editFileType as FileType });
+    setDocs(getDocuments());
+    setEditDialogOpen(false);
+    setEditDoc(null);
+  };
+
   return (
     <div className="p-8 max-w-6xl mx-auto space-y-8 animate-fade-in">
       <div className="flex items-center justify-between">
