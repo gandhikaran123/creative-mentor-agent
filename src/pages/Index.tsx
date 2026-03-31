@@ -50,7 +50,6 @@ export default function Index() {
     const file = e.target.files?.[0];
     if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
       setter({ name: file.name, url: URL.createObjectURL(file) });
-      setShowResults(false);
     }
   };
 
