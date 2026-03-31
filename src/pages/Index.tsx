@@ -29,12 +29,11 @@ interface UploadedImage {
 }
 
 export default function Index() {
+  const navigate = useNavigate();
   const [brand, setBrand] = useState("");
   const [category, setCategory] = useState("");
   const [frontImage, setFrontImage] = useState<UploadedImage | null>(null);
   const [backImage, setBackImage] = useState<UploadedImage | null>(null);
-  const [isReviewing, setIsReviewing] = useState(false);
-  const [showResults, setShowResults] = useState(false);
 
   const frontRef = useRef<HTMLInputElement>(null);
   const backRef = useRef<HTMLInputElement>(null);
