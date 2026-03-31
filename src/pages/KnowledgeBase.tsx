@@ -104,6 +104,7 @@ export default function KnowledgeBase() {
     setDocs(getDocuments());
     setEditDialogOpen(false);
     setEditDoc(null);
+    toast({ title: "Document updated", description: editDoc.fileName + " has been updated." });
   };
 
   return (
