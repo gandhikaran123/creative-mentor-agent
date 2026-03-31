@@ -280,6 +280,15 @@ export default function KnowledgeBase() {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-[40px]">
+                <Checkbox
+                  checked={paginatedDocs.length > 0 && paginatedDocs.every((d) => selectedIds.has(d.id))}
+                  onCheckedChange={(checked) => {
+                    const next = new Set(selectedIds);
+                    paginatedDocs.forEach((d) => checked ? next.add(d.id) : next.delete(d.id));
+                    setSelectedIds(next);
+                  }}
+                />
               <TableHead className="cursor-pointer select-none" onClick={() => toggleSort("fileName")}>
                 <span className="inline-flex items-center">File Name{sortIcon("fileName")}</span>
               </TableHead>
