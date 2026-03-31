@@ -83,9 +83,11 @@ export default function KnowledgeBase() {
 
   const confirmDelete = () => {
     if (!deleteTarget) return;
+    const fileName = deleteTarget.fileName;
     deleteDocument(deleteTarget.id);
     setDocs(getDocuments());
     setDeleteTarget(null);
+    toast({ title: "Document deleted", description: fileName + " has been removed." });
   };
 
   const openEdit = (doc: KnowledgeDocument) => {
