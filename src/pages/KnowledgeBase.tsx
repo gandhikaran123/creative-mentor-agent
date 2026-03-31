@@ -321,7 +321,7 @@ export default function KnowledgeBase() {
         </Table>
       </Card>
 
-      <p className="text-xs text-muted-foreground">{filteredDocs.length} document{filteredDocs.length !== 1 ? "s" : ""}</p>
+      <p className="text-xs text-muted-foreground">{sortedDocs.length} document{sortedDocs.length !== 1 ? "s" : ""}</p>
 
       {/* Edit Dialog */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
