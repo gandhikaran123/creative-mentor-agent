@@ -289,6 +289,7 @@ export default function KnowledgeBase() {
                     setSelectedIds(next);
                   }}
                 />
+              </TableHead>
               <TableHead className="cursor-pointer select-none" onClick={() => toggleSort("fileName")}>
                 <span className="inline-flex items-center">File Name{sortIcon("fileName")}</span>
               </TableHead>
