@@ -50,11 +50,39 @@ export default function KnowledgeBase() {
   const [editFileType, setEditFileType] = useState<FileType | "">("");
   const [editDialogOpen, setEditDialogOpen] = useState(false);
 
+  // Sorting
+  const [sortField, setSortField] = useState<string | null>(null);
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+
+  const toggleSort = (field: string) => {
+    if (sortField === field) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortField(field);
+      setSortDir("asc");
+    }
+  };
+
+  const sortIcon = (field: string) => {
+    if (sortField !== field) return <ArrowUpDown className="h-3 w-3 ml-1 text-muted-foreground/50" />;
+    return sortDir === "asc"
+      ? <ArrowUp className="h-3 w-3 ml-1 text-primary" />
+      : <ArrowDown className="h-3 w-3 ml-1 text-primary" />;
+  };
+
   const filteredDocs = docs.filter((d) => {
     if (filterBrand !== "all" && d.brand !== filterBrand) return false;
     if (filterCategory !== "all" && d.category !== filterCategory) return false;
     if (filterType !== "all" && d.fileType !== filterType) return false;
     return true;
+  });
+
+  const sortedDocs = [...filteredDocs].sort((a, b) => {
+    if (!sortField) return 0;
+    const aVal = String(a[sortField as keyof KnowledgeDocument] ?? "");
+    const bVal = String(b[sortField as keyof KnowledgeDocument] ?? "");
+    const cmp = aVal.localeCompare(bVal);
+    return sortDir === "asc" ? cmp : -cmp;
   });
 
   const filterCategories = filterBrand !== "all" ? categoryMap[filterBrand] || [] : [];
