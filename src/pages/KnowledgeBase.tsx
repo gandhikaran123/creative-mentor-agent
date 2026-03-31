@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Plus, Trash2, FileText, Upload, Pencil, ArrowUpDown, ArrowUp, ArrowDown, Search, ChevronLeft, ChevronRight, Calendar, User, Tag, FolderOpen, ExternalLink } from "lucide-react";
+import { useState, useRef, useCallback } from "react";
+import { Plus, Trash2, FileText, Upload, Pencil, ArrowUpDown, ArrowUp, ArrowDown, Search, ChevronLeft, ChevronRight, Calendar, User, Tag, FolderOpen, ExternalLink, UploadCloud, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -48,6 +48,47 @@ export default function KnowledgeBase() {
   const [uploadFileType, setUploadFileType] = useState<FileType | "">("");
   const [uploadFileName, setUploadFileName] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  // Drag-and-drop state
+  const [isDraggingPage, setIsDraggingPage] = useState(false);
+  const [isDraggingZone, setIsDraggingZone] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const dragCounterRef = useRef(0);
+
+  const acceptedExtensions = [".pdf", ".doc", ".docx", ".xlsx", ".xls"];
+  const isAcceptedFile = (file: File) =>
+    acceptedExtensions.some((ext) => file.name.toLowerCase().endsWith(ext));
+
+  const handleFileDrop = useCallback((files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    const file = files[0];
+    if (!isAcceptedFile(file)) {
+      toast({ title: "Invalid file type", description: "Please upload a PDF, DOC, DOCX, XLS, or XLSX file.", variant: "destructive" });
+      return;
+    }
+    setUploadFileName(file.name);
+    if (!dialogOpen) setDialogOpen(true);
+  }, [dialogOpen, toast]);
+
+  // Page-level drag handlers
+  const handlePageDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    dragCounterRef.current++;
+    if (e.dataTransfer.types.includes("Files")) setIsDraggingPage(true);
+  };
+  const handlePageDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    dragCounterRef.current--;
+    if (dragCounterRef.current === 0) setIsDraggingPage(false);
+  };
+  const handlePageDragOver = (e: React.DragEvent) => e.preventDefault();
+  const handlePageDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    dragCounterRef.current = 0;
+    setIsDraggingPage(false);
+    setIsDraggingZone(false);
+    handleFileDrop(e.dataTransfer.files);
+  };
 
   // Edit form state
   const [editDoc, setEditDoc] = useState<KnowledgeDocument | null>(null);
@@ -150,7 +191,23 @@ export default function KnowledgeBase() {
   };
 
   return (
-    <div className="p-8 max-w-6xl mx-auto space-y-8 animate-fade-in">
+    <div
+      className="p-8 max-w-6xl mx-auto space-y-8 animate-fade-in relative"
+      onDragEnter={handlePageDragEnter}
+      onDragLeave={handlePageDragLeave}
+      onDragOver={handlePageDragOver}
+      onDrop={handlePageDrop}
+    >
+      {/* Full-page drag overlay */}
+      {isDraggingPage && (
+        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center pointer-events-none">
+          <div className="border-2 border-dashed border-primary rounded-2xl p-12 text-center">
+            <UploadCloud className="h-16 w-16 text-primary mx-auto mb-4" />
+            <p className="text-lg font-semibold text-foreground">Drop file to upload</p>
+            <p className="text-sm text-muted-foreground mt-1">PDF, DOC, DOCX, XLS, XLSX</p>
+          </div>
+        </div>
+      )}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">Knowledge Base</h1>
@@ -197,20 +254,56 @@ export default function KnowledgeBase() {
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium text-foreground">File</label>
-                <div className="flex items-center gap-3">
-                  <Input
-                    type="file"
-                    accept=".pdf,.doc,.docx,.xlsx,.xls"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) setUploadFileName(file.name);
+                {!uploadFileName ? (
+                  <div
+                    className={`relative border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
+                      isDraggingZone
+                        ? "border-primary bg-primary/5"
+                        : "border-muted-foreground/25 hover:border-primary/50 hover:bg-muted/30"
+                    }`}
+                    onDragEnter={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingZone(true); }}
+                    onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingZone(false); }}
+                    onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setIsDraggingZone(false);
+                      handleFileDrop(e.dataTransfer.files);
                     }}
-                  />
-                </div>
-                {uploadFileName && (
-                  <p className="text-xs text-muted-foreground flex items-center gap-1.5 mt-1">
-                    <FileText className="h-3 w-3" /> {uploadFileName}
-                  </p>
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <UploadCloud className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                    <p className="text-sm font-medium text-foreground">
+                      Drag & drop a file here, or <span className="text-primary">browse</span>
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">PDF, DOC, DOCX, XLS, XLSX</p>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept=".pdf,.doc,.docx,.xlsx,.xls"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) setUploadFileName(file.name);
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 rounded-lg border bg-muted/30 px-3 py-2">
+                    <FileText className="h-4 w-4 text-primary shrink-0" />
+                    <span className="text-sm font-medium text-foreground truncate flex-1">{uploadFileName}</span>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 text-muted-foreground hover:text-destructive"
+                      onClick={() => {
+                        setUploadFileName("");
+                        if (fileInputRef.current) fileInputRef.current.value = "";
+                      }}
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
                 )}
               </div>
               <div className="flex justify-end gap-2 pt-2">
