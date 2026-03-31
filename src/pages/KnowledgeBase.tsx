@@ -42,6 +42,47 @@ export default function KnowledgeBase() {
   const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
   const [previewDoc, setPreviewDoc] = useState<KnowledgeDocument | null>(null);
 
+  // Drag-and-drop state
+  const [isDraggingPage, setIsDraggingPage] = useState(false);
+  const [isDraggingZone, setIsDraggingZone] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const dragCounterRef = useRef(0);
+
+  const acceptedExtensions = [".pdf", ".doc", ".docx", ".xlsx", ".xls"];
+  const isAcceptedFile = (file: File) =>
+    acceptedExtensions.some((ext) => file.name.toLowerCase().endsWith(ext));
+
+  const handleFileDrop = useCallback((files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    const file = files[0];
+    if (!isAcceptedFile(file)) {
+      toast({ title: "Invalid file type", description: "Please upload a PDF, DOC, DOCX, XLS, or XLSX file.", variant: "destructive" });
+      return;
+    }
+    setUploadFileName(file.name);
+    if (!dialogOpen) setDialogOpen(true);
+  }, [dialogOpen, toast]);
+
+  // Page-level drag handlers
+  const handlePageDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    dragCounterRef.current++;
+    if (e.dataTransfer.types.includes("Files")) setIsDraggingPage(true);
+  };
+  const handlePageDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    dragCounterRef.current--;
+    if (dragCounterRef.current === 0) setIsDraggingPage(false);
+  };
+  const handlePageDragOver = (e: React.DragEvent) => e.preventDefault();
+  const handlePageDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    dragCounterRef.current = 0;
+    setIsDraggingPage(false);
+    setIsDraggingZone(false);
+    handleFileDrop(e.dataTransfer.files);
+  };
+
   // Upload form state
   const [uploadBrand, setUploadBrand] = useState("");
   const [uploadCategory, setUploadCategory] = useState("");
