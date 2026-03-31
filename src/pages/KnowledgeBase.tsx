@@ -227,7 +227,7 @@ export default function KnowledgeBase() {
               <TableHead>Category</TableHead>
               <TableHead>Uploaded By</TableHead>
               <TableHead>Date</TableHead>
-              <TableHead className="w-[60px]">Actions</TableHead>
+              <TableHead className="w-[100px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -254,9 +254,14 @@ export default function KnowledgeBase() {
                   <TableCell className="text-muted-foreground">{doc.uploadedBy}</TableCell>
                   <TableCell className="text-muted-foreground">{doc.uploadedDate}</TableCell>
                   <TableCell>
-                    <Button variant="ghost" size="icon" onClick={() => handleDelete(doc.id)} className="h-8 w-8 text-muted-foreground hover:text-destructive">
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    <div className="flex items-center gap-1">
+                      <Button variant="ghost" size="icon" onClick={() => openEdit(doc)} className="h-8 w-8 text-muted-foreground hover:text-primary">
+                        <Pencil className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button variant="ghost" size="icon" onClick={() => handleDelete(doc.id)} className="h-8 w-8 text-muted-foreground hover:text-destructive">
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
