@@ -75,6 +75,7 @@ export default function KnowledgeBase() {
     if (filterBrand !== "all" && d.brand !== filterBrand) return false;
     if (filterCategory !== "all" && d.category !== filterCategory) return false;
     if (filterType !== "all" && d.fileType !== filterType) return false;
+    if (searchQuery && !d.fileName.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     return true;
   });
 
