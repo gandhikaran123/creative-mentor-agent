@@ -76,6 +76,7 @@ export default function KnowledgeBase() {
     setUploadFileType("");
     setUploadFileName("");
     setDialogOpen(false);
+    toast({ title: "Document uploaded", description: uploadFileName + " has been added to the knowledge base." });
   };
 
   const [deleteTarget, setDeleteTarget] = useState<KnowledgeDocument | null>(null);
