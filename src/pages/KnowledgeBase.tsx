@@ -252,7 +252,7 @@ export default function KnowledgeBase() {
           </div>
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Category</label>
-            <Select value={filterCategory} onValueChange={setFilterCategory} disabled={filterBrand === "all"}>
+            <Select value={filterCategory} onValueChange={(v) => { setFilterCategory(v); setPage(1); }} disabled={filterBrand === "all"}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
