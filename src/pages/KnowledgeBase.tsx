@@ -506,7 +506,104 @@ export default function KnowledgeBase() {
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
-      </AlertDialog>
+      {/* Document Preview Panel */}
+      <Sheet open={!!previewDoc} onOpenChange={(open) => !open && setPreviewDoc(null)}>
+        <SheetContent side="right" className="sm:max-w-md overflow-y-auto">
+          <SheetHeader className="pb-4">
+            <SheetTitle className="flex items-center gap-2 text-base">
+              <FileText className="h-5 w-5 text-primary" />
+              Document Details
+            </SheetTitle>
+            <SheetDescription>Preview document metadata and properties.</SheetDescription>
+          </SheetHeader>
+          {previewDoc && (
+            <div className="space-y-6 pt-2">
+              {/* File name */}
+              <div className="space-y-1.5">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">File Name</p>
+                <p className="text-sm font-semibold text-foreground break-all">{previewDoc.fileName}</p>
+              </div>
+
+              <Separator />
+
+              {/* Details grid */}
+              <div className="grid gap-4">
+                <div className="flex items-start gap-3">
+                  <Tag className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                  <div className="space-y-1">
+                    <p className="text-xs font-medium text-muted-foreground">Type</p>
+                    <Badge variant="secondary" className={fileTypeBadgeClass[previewDoc.fileType]}>
+                      {fileTypeLabels[previewDoc.fileType]}
+                    </Badge>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <FolderOpen className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                  <div className="space-y-1">
+                    <p className="text-xs font-medium text-muted-foreground">Brand</p>
+                    <p className="text-sm text-foreground">{previewDoc.brand}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <FolderOpen className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                  <div className="space-y-1">
+                    <p className="text-xs font-medium text-muted-foreground">Category</p>
+                    <p className="text-sm text-foreground">{previewDoc.category}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <User className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                  <div className="space-y-1">
+                    <p className="text-xs font-medium text-muted-foreground">Uploaded By</p>
+                    <p className="text-sm text-foreground">{previewDoc.uploadedBy}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <Calendar className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                  <div className="space-y-1">
+                    <p className="text-xs font-medium text-muted-foreground">Upload Date</p>
+                    <p className="text-sm text-foreground">{previewDoc.uploadedDate}</p>
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Actions */}
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5"
+                  onClick={() => {
+                    setPreviewDoc(null);
+                    openEdit(previewDoc);
+                  }}
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                  Edit
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5 text-destructive hover:text-destructive"
+                  onClick={() => {
+                    setPreviewDoc(null);
+                    setDeleteTarget(previewDoc);
+                  }}
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  Delete
+                </Button>
+              </div>
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
