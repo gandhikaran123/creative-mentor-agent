@@ -86,7 +86,7 @@ export default function Index() {
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium text-foreground">Category</label>
-          <Select value={category} onValueChange={(v) => { setCategory(v); setShowResults(false); }} disabled={!brand}>
+          <Select value={category} onValueChange={setCategory} disabled={!brand}>
             <SelectTrigger><SelectValue placeholder={brand ? "Select category" : "Select brand first"} /></SelectTrigger>
             <SelectContent>
               {categories.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
