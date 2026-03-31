@@ -276,7 +276,19 @@ export default function KnowledgeBase() {
         </div>
       </Card>
 
-      {/* Table */}
+      {/* Bulk actions & Table */}
+      {selectedIds.size > 0 && (
+        <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 border">
+          <span className="text-sm text-muted-foreground">{selectedIds.size} selected</span>
+          <Button variant="destructive" size="sm" className="gap-1.5" onClick={() => setBulkDeleteOpen(true)}>
+            <Trash2 className="h-3.5 w-3.5" />
+            Delete Selected
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => setSelectedIds(new Set())}>
+            Clear
+          </Button>
+        </div>
+      )}
       <Card>
         <Table>
           <TableHeader>
