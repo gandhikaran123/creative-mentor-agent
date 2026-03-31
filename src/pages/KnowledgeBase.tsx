@@ -61,13 +61,19 @@ export default function KnowledgeBase() {
 
   const handleFileDrop = useCallback((files: FileList | null) => {
     if (!files || files.length === 0) return;
-    const file = files[0];
-    if (!isAcceptedFile(file)) {
-      toast({ title: "Invalid file type", description: "Please upload a PDF, DOC, DOCX, XLS, or XLSX file.", variant: "destructive" });
-      return;
+    const validFiles: string[] = [];
+    const invalidFiles: string[] = [];
+    Array.from(files).forEach((file) => {
+      if (isAcceptedFile(file)) validFiles.push(file.name);
+      else invalidFiles.push(file.name);
+    });
+    if (invalidFiles.length > 0) {
+      toast({ title: "Some files skipped", description: `${invalidFiles.length} file(s) had unsupported types (PDF, DOC, DOCX, XLS, XLSX only).`, variant: "destructive" });
     }
-    setUploadFileName(file.name);
-    if (!dialogOpen) setDialogOpen(true);
+    if (validFiles.length > 0) {
+      setUploadFileNames((prev) => [...prev, ...validFiles]);
+      if (!dialogOpen) setDialogOpen(true);
+    }
   }, [dialogOpen, toast]);
 
   // Page-level drag handlers
