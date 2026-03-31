@@ -40,6 +40,13 @@ export default function KnowledgeBase() {
   const [uploadFileName, setUploadFileName] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
 
+  // Edit form state
+  const [editDoc, setEditDoc] = useState<KnowledgeDocument | null>(null);
+  const [editBrand, setEditBrand] = useState("");
+  const [editCategory, setEditCategory] = useState("");
+  const [editFileType, setEditFileType] = useState<FileType | "">("");
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+
   const filteredDocs = docs.filter((d) => {
     if (filterBrand !== "all" && d.brand !== filterBrand) return false;
     if (filterCategory !== "all" && d.category !== filterCategory) return false;
