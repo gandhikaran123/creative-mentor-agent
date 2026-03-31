@@ -214,19 +214,11 @@ export default function Index() {
 
       {/* Run Review */}
       <div className="flex justify-end">
-        <Button onClick={handleRunReview} disabled={!canRunReview || isReviewing} className="gap-2 px-6">
+        <Button onClick={handleRunReview} disabled={!canRunReview} className="gap-2 px-6">
           <Play className="h-4 w-4" />
-          {isReviewing ? "Reviewing…" : "Run Review"}
+          Run Review
         </Button>
       </div>
-
-      {/* Results */}
-      {showResults && (
-        <>
-          <Separator />
-          <ReviewResults />
-        </>
-      )}
     </div>
   );
 }
