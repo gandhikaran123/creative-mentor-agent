@@ -76,3 +76,7 @@ export function addDocument(doc: Omit<KnowledgeDocument, "id">): KnowledgeDocume
 export function deleteDocument(id: string): void {
   documents = documents.filter((d) => d.id !== id);
 }
+
+export function updateDocument(id: string, updates: Partial<Pick<KnowledgeDocument, "fileType" | "brand" | "category">>): void {
+  documents = documents.map((d) => (d.id === id ? { ...d, ...updates } : d));
+}

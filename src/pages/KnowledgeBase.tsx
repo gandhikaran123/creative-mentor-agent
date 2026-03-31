@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Trash2, FileText, Upload } from "lucide-react";
+import { Plus, Trash2, FileText, Upload, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -16,6 +16,7 @@ import {
   getDocuments,
   addDocument,
   deleteDocument,
+  updateDocument,
   type FileType,
   type KnowledgeDocument,
 } from "@/data/knowledgeData";
@@ -38,6 +39,13 @@ export default function KnowledgeBase() {
   const [uploadFileType, setUploadFileType] = useState<FileType | "">("");
   const [uploadFileName, setUploadFileName] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  // Edit form state
+  const [editDoc, setEditDoc] = useState<KnowledgeDocument | null>(null);
+  const [editBrand, setEditBrand] = useState("");
+  const [editCategory, setEditCategory] = useState("");
+  const [editFileType, setEditFileType] = useState<FileType | "">("");
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   const filteredDocs = docs.filter((d) => {
     if (filterBrand !== "all" && d.brand !== filterBrand) return false;
@@ -70,6 +78,22 @@ export default function KnowledgeBase() {
   const handleDelete = (id: string) => {
     deleteDocument(id);
     setDocs(getDocuments());
+  };
+
+  const openEdit = (doc: KnowledgeDocument) => {
+    setEditDoc(doc);
+    setEditBrand(doc.brand);
+    setEditCategory(doc.category);
+    setEditFileType(doc.fileType);
+    setEditDialogOpen(true);
+  };
+
+  const handleEdit = () => {
+    if (!editDoc || !editBrand || !editCategory || !editFileType) return;
+    updateDocument(editDoc.id, { brand: editBrand, category: editCategory, fileType: editFileType as FileType });
+    setDocs(getDocuments());
+    setEditDialogOpen(false);
+    setEditDoc(null);
   };
 
   return (
@@ -203,7 +227,7 @@ export default function KnowledgeBase() {
               <TableHead>Category</TableHead>
               <TableHead>Uploaded By</TableHead>
               <TableHead>Date</TableHead>
-              <TableHead className="w-[60px]">Actions</TableHead>
+              <TableHead className="w-[100px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -230,9 +254,14 @@ export default function KnowledgeBase() {
                   <TableCell className="text-muted-foreground">{doc.uploadedBy}</TableCell>
                   <TableCell className="text-muted-foreground">{doc.uploadedDate}</TableCell>
                   <TableCell>
-                    <Button variant="ghost" size="icon" onClick={() => handleDelete(doc.id)} className="h-8 w-8 text-muted-foreground hover:text-destructive">
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    <div className="flex items-center gap-1">
+                      <Button variant="ghost" size="icon" onClick={() => openEdit(doc)} className="h-8 w-8 text-muted-foreground hover:text-primary">
+                        <Pencil className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button variant="ghost" size="icon" onClick={() => handleDelete(doc.id)} className="h-8 w-8 text-muted-foreground hover:text-destructive">
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
@@ -242,6 +271,58 @@ export default function KnowledgeBase() {
       </Card>
 
       <p className="text-xs text-muted-foreground">{filteredDocs.length} document{filteredDocs.length !== 1 ? "s" : ""}</p>
+
+      {/* Edit Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Document</DialogTitle>
+          </DialogHeader>
+          {editDoc && (
+            <div className="space-y-4 pt-2">
+              <div className="space-y-1">
+                <label className="text-xs text-muted-foreground">File</label>
+                <p className="text-sm font-medium text-foreground">{editDoc.fileName}</p>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">Brand</label>
+                <Select value={editBrand} onValueChange={(v) => { setEditBrand(v); setEditCategory(""); }}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {brands.map((b) => <SelectItem key={b} value={b}>{b}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">Category</label>
+                <Select value={editCategory} onValueChange={setEditCategory} disabled={!editBrand}>
+                  <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
+                  <SelectContent>
+                    {(categoryMap[editBrand] || []).map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">File Type</label>
+                <Select value={editFileType} onValueChange={(v) => setEditFileType(v as FileType)}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {fileTypes.map((ft) => <SelectItem key={ft} value={ft}>{fileTypeLabels[ft]}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex justify-end gap-2 pt-2">
+                <DialogClose asChild>
+                  <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button onClick={handleEdit} disabled={!editBrand || !editCategory || !editFileType}>
+                  Save Changes
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
