@@ -40,6 +40,7 @@ export default function KnowledgeBase() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
+  const [previewDoc, setPreviewDoc] = useState<KnowledgeDocument | null>(null);
 
   // Upload form state
   const [uploadBrand, setUploadBrand] = useState("");
