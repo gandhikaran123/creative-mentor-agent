@@ -279,7 +279,19 @@ export default function KnowledgeBase() {
       {/* Bulk actions & Table */}
       {selectedIds.size > 0 && (
         <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 border">
-          <span className="text-sm text-muted-foreground">{selectedIds.size} selected</span>
+          <span className="text-sm text-muted-foreground">
+            {selectedIds.size} of {sortedDocs.length} selected
+          </span>
+          {selectedIds.size < sortedDocs.length && (
+            <Button
+              variant="link"
+              size="sm"
+              className="text-primary px-0"
+              onClick={() => setSelectedIds(new Set(sortedDocs.map((d) => d.id)))}
+            >
+              Select all {sortedDocs.length}
+            </Button>
+          )}
           <Button variant="destructive" size="sm" className="gap-1.5" onClick={() => setBulkDeleteOpen(true)}>
             <Trash2 className="h-3.5 w-3.5" />
             Delete Selected
