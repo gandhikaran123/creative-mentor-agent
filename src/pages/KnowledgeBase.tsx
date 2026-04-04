@@ -283,20 +283,20 @@ export default function KnowledgeBase() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Category</label>
-                <Select value={uploadCategory} onValueChange={setUploadCategory} disabled={!uploadBrand}>
-                  <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
+                <label className="text-sm font-medium text-foreground">Type</label>
+                <Select value={uploadFileType} onValueChange={(v) => setUploadFileType(v as FileType)} disabled={!uploadBrand}>
+                  <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
                   <SelectContent>
-                    {(categoryMap[uploadBrand] || []).map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                    {(typeMap[uploadBrand] || []).map((ft) => <SelectItem key={ft} value={ft}>{fileTypeLabels[ft]}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">File Type</label>
-                <Select value={uploadFileType} onValueChange={(v) => setUploadFileType(v as FileType)}>
-                  <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+                <label className="text-sm font-medium text-foreground">Category</label>
+                <Select value={uploadCategory} onValueChange={setUploadCategory}>
+                  <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
                   <SelectContent>
-                    {fileTypes.map((ft) => <SelectItem key={ft} value={ft}>{fileTypeLabels[ft]}</SelectItem>)}
+                    {categories.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
