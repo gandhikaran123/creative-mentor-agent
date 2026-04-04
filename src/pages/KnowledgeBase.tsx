@@ -190,7 +190,7 @@ export default function KnowledgeBase() {
         fileName: uploadFileNames[i],
         fileType: uploadFileType as FileType,
         brand: uploadBrand,
-        category: uploadCategory,
+        category: uploadCategory as Category,
         uploadedBy: "Current User",
         uploadedDate: new Date().toISOString().split("T")[0],
         fileUrl: "#",
