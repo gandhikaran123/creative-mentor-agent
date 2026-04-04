@@ -421,22 +421,22 @@ export default function KnowledgeBase() {
             </Select>
           </div>
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Category</label>
-            <Select value={filterCategory} onValueChange={(v) => { setFilterCategory(v); setPage(1); }} disabled={filterBrand === "all"}>
+            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Type</label>
+            <Select value={filterType} onValueChange={(v) => { setFilterType(v); setPage(1); }} disabled={filterBrand === "all"}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                {filterCategories.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                <SelectItem value="all">All Types</SelectItem>
+                {filterTypesByBrand.map((ft) => <SelectItem key={ft} value={ft}>{fileTypeLabels[ft]}</SelectItem>)}
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">File Type</label>
-            <Select value={filterType} onValueChange={(v) => { setFilterType(v); setPage(1); }}>
+            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Category</label>
+            <Select value={filterCategory} onValueChange={(v) => { setFilterCategory(v); setPage(1); }}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
-                {fileTypes.map((ft) => <SelectItem key={ft} value={ft}>{fileTypeLabels[ft]}</SelectItem>)}
+                <SelectItem value="all">All Categories</SelectItem>
+                {categories.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
               </SelectContent>
             </Select>
           </div>
