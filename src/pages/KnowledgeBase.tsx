@@ -15,21 +15,26 @@ import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import {
   brands,
-  categoryMap,
+  typeMap,
   fileTypes,
   fileTypeLabels,
+  categories,
   getDocuments,
   addDocument,
   deleteDocument,
   updateDocument,
   type FileType,
+  type Category,
   type KnowledgeDocument,
 } from "@/data/knowledgeData";
 
 const fileTypeBadgeClass: Record<FileType, string> = {
-  compliance: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
-  brand: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300",
-  product: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300",
+  "product-label": "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
+  "email-copy": "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300",
+  "social-media-ad": "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300",
+  "amazon-dsp-ad": "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300",
+  "social-post": "bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-300",
+  "amazon-pdp": "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-300",
 };
 
 export default function KnowledgeBase() {
@@ -153,7 +158,7 @@ export default function KnowledgeBase() {
   const currentPage = Math.min(page, totalPages);
   const paginatedDocs = sortedDocs.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
-  const filterCategories = filterBrand !== "all" ? categoryMap[filterBrand] || [] : [];
+  const filterTypesByBrand = filterBrand !== "all" ? typeMap[filterBrand] || [] : [];
 
   const highlightMatch = (text: string, query: string) => {
     if (!query) return text;
@@ -185,7 +190,7 @@ export default function KnowledgeBase() {
         fileName: uploadFileNames[i],
         fileType: uploadFileType as FileType,
         brand: uploadBrand,
-        category: uploadCategory,
+        category: uploadCategory as Category,
         uploadedBy: "Current User",
         uploadedDate: new Date().toISOString().split("T")[0],
         fileUrl: "#",
@@ -226,7 +231,7 @@ export default function KnowledgeBase() {
 
   const handleEdit = () => {
     if (!editDoc || !editBrand || !editCategory || !editFileType) return;
-    updateDocument(editDoc.id, { brand: editBrand, category: editCategory, fileType: editFileType as FileType });
+    updateDocument(editDoc.id, { brand: editBrand, category: editCategory as Category, fileType: editFileType as FileType });
     setDocs(getDocuments());
     setEditDialogOpen(false);
     setEditDoc(null);
@@ -270,7 +275,7 @@ export default function KnowledgeBase() {
             <div className="space-y-4 pt-2">
               <div className="space-y-2">
                 <label className="text-sm font-medium text-foreground">Brand</label>
-                <Select value={uploadBrand} onValueChange={(v) => { setUploadBrand(v); setUploadCategory(""); }}>
+                <Select value={uploadBrand} onValueChange={(v) => { setUploadBrand(v); setUploadFileType(""); }}>
                   <SelectTrigger><SelectValue placeholder="Select brand" /></SelectTrigger>
                   <SelectContent>
                     {brands.map((b) => <SelectItem key={b} value={b}>{b}</SelectItem>)}
@@ -278,20 +283,20 @@ export default function KnowledgeBase() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Category</label>
-                <Select value={uploadCategory} onValueChange={setUploadCategory} disabled={!uploadBrand}>
-                  <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
+                <label className="text-sm font-medium text-foreground">Type</label>
+                <Select value={uploadFileType} onValueChange={(v) => setUploadFileType(v as FileType)} disabled={!uploadBrand}>
+                  <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
                   <SelectContent>
-                    {(categoryMap[uploadBrand] || []).map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                    {(typeMap[uploadBrand] || []).map((ft) => <SelectItem key={ft} value={ft}>{fileTypeLabels[ft]}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">File Type</label>
-                <Select value={uploadFileType} onValueChange={(v) => setUploadFileType(v as FileType)}>
-                  <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+                <label className="text-sm font-medium text-foreground">Category</label>
+                <Select value={uploadCategory} onValueChange={setUploadCategory}>
+                  <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
                   <SelectContent>
-                    {fileTypes.map((ft) => <SelectItem key={ft} value={ft}>{fileTypeLabels[ft]}</SelectItem>)}
+                    {categories.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
@@ -416,22 +421,22 @@ export default function KnowledgeBase() {
             </Select>
           </div>
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Category</label>
-            <Select value={filterCategory} onValueChange={(v) => { setFilterCategory(v); setPage(1); }} disabled={filterBrand === "all"}>
+            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Type</label>
+            <Select value={filterType} onValueChange={(v) => { setFilterType(v); setPage(1); }} disabled={filterBrand === "all"}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                {filterCategories.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                <SelectItem value="all">All Types</SelectItem>
+                {filterTypesByBrand.map((ft) => <SelectItem key={ft} value={ft}>{fileTypeLabels[ft]}</SelectItem>)}
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">File Type</label>
-            <Select value={filterType} onValueChange={(v) => { setFilterType(v); setPage(1); }}>
+            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Category</label>
+            <Select value={filterCategory} onValueChange={(v) => { setFilterCategory(v); setPage(1); }}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
-                {fileTypes.map((ft) => <SelectItem key={ft} value={ft}>{fileTypeLabels[ft]}</SelectItem>)}
+                <SelectItem value="all">All Categories</SelectItem>
+                {categories.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
               </SelectContent>
             </Select>
           </div>
@@ -584,7 +589,7 @@ export default function KnowledgeBase() {
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium text-foreground">Brand</label>
-                <Select value={editBrand} onValueChange={(v) => { setEditBrand(v); setEditCategory(""); }}>
+                <Select value={editBrand} onValueChange={(v) => { setEditBrand(v); setEditFileType(""); }}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {brands.map((b) => <SelectItem key={b} value={b}>{b}</SelectItem>)}
@@ -592,20 +597,20 @@ export default function KnowledgeBase() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Category</label>
-                <Select value={editCategory} onValueChange={setEditCategory} disabled={!editBrand}>
-                  <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
+                <label className="text-sm font-medium text-foreground">Type</label>
+                <Select value={editFileType} onValueChange={(v) => setEditFileType(v as FileType)} disabled={!editBrand}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    {(categoryMap[editBrand] || []).map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                    {(typeMap[editBrand] || []).map((ft) => <SelectItem key={ft} value={ft}>{fileTypeLabels[ft]}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">File Type</label>
-                <Select value={editFileType} onValueChange={(v) => setEditFileType(v as FileType)}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                <label className="text-sm font-medium text-foreground">Category</label>
+                <Select value={editCategory} onValueChange={setEditCategory}>
+                  <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
                   <SelectContent>
-                    {fileTypes.map((ft) => <SelectItem key={ft} value={ft}>{fileTypeLabels[ft]}</SelectItem>)}
+                    {categories.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>

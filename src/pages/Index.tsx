@@ -8,18 +8,20 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import {
   brands,
-  categoryMap,
+  typeMap,
+  categories,
   fileTypeLabels,
   fileTypes,
-  getDocumentsForBrandCategory,
+  getDocumentsForBrandType,
   type FileType,
+  type Category,
   type KnowledgeDocument,
 } from "@/data/knowledgeData";
 
-const fileTypeIcons: Record<FileType, typeof Shield> = {
-  compliance: Shield,
-  brand: BookOpen,
-  product: Package,
+const categoryIcons: Record<Category, typeof Shield> = {
+  "Compliance Rules": Shield,
+  "Brand Guidelines": BookOpen,
+  "Product Knowledge": Package,
 };
 
 interface UploadedImage {
@@ -30,20 +32,20 @@ interface UploadedImage {
 export default function Index() {
   const navigate = useNavigate();
   const [brand, setBrand] = useState("");
-  const [category, setCategory] = useState("");
+  const [assetType, setAssetType] = useState("");
   const [frontImage, setFrontImage] = useState<UploadedImage | null>(null);
   const [backImage, setBackImage] = useState<UploadedImage | null>(null);
 
   const frontRef = useRef<HTMLInputElement>(null);
   const backRef = useRef<HTMLInputElement>(null);
 
-  const categories = brand ? categoryMap[brand] || [] : [];
-  const knowledgeDocs = brand && category ? getDocumentsForBrandCategory(brand, category) : [];
+  const availableTypes = brand ? typeMap[brand] || [] : [];
+  const knowledgeDocs = brand && assetType ? getDocumentsForBrandType(brand, assetType) : [];
 
-  const groupedDocs = fileTypes.reduce<Record<FileType, KnowledgeDocument[]>>((acc, ft) => {
-    acc[ft] = knowledgeDocs.filter((d) => d.fileType === ft);
+  const groupedDocs = categories.reduce<Record<Category, KnowledgeDocument[]>>((acc, cat) => {
+    acc[cat] = knowledgeDocs.filter((d) => d.category === cat);
     return acc;
-  }, { compliance: [], brand: [], product: [] });
+  }, { "Compliance Rules": [], "Brand Guidelines": [], "Product Knowledge": [] });
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>, setter: (img: UploadedImage | null) => void) => {
     const file = e.target.files?.[0];
@@ -55,28 +57,28 @@ export default function Index() {
   const handleRunReview = () => {
     if (!frontImage || !backImage) return;
     navigate("/results", {
-      state: { frontImage, backImage, brand, category },
+      state: { frontImage, backImage, brand, type: assetType },
     });
   };
 
-  const canRunReview = brand && category && frontImage && backImage;
+  const canRunReview = brand && assetType && frontImage && backImage;
 
   return (
     <div className="p-8 max-w-4xl mx-auto space-y-8 animate-fade-in">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight text-foreground">New Creative Review</h1>
         <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
-          Select brand and category, upload front &amp; back images, then run an AI-powered compliance review.
+          Select brand and type, upload front &amp; back images, then run an AI-powered compliance review.
         </p>
       </div>
 
       <Separator />
 
-      {/* Brand & Category */}
+      {/* Brand & Type */}
       <div className="grid grid-cols-2 gap-6">
         <div className="space-y-2">
           <label className="text-sm font-medium text-foreground">Brand</label>
-          <Select value={brand} onValueChange={(v) => { setBrand(v); setCategory(""); }}>
+          <Select value={brand} onValueChange={(v) => { setBrand(v); setAssetType(""); }}>
             <SelectTrigger><SelectValue placeholder="Select brand" /></SelectTrigger>
             <SelectContent>
               {brands.map((b) => <SelectItem key={b} value={b}>{b}</SelectItem>)}
@@ -84,36 +86,36 @@ export default function Index() {
           </Select>
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-medium text-foreground">Category</label>
-          <Select value={category} onValueChange={setCategory} disabled={!brand}>
-            <SelectTrigger><SelectValue placeholder={brand ? "Select category" : "Select brand first"} /></SelectTrigger>
+          <label className="text-sm font-medium text-foreground">Type</label>
+          <Select value={assetType} onValueChange={setAssetType} disabled={!brand}>
+            <SelectTrigger><SelectValue placeholder={brand ? "Select type" : "Select brand first"} /></SelectTrigger>
             <SelectContent>
-              {categories.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+              {availableTypes.map((ft) => <SelectItem key={ft} value={ft}>{fileTypeLabels[ft]}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
       </div>
 
-      {/* Dynamic Knowledge Display */}
-      {brand && category && (
+      {/* Dynamic Knowledge Display — grouped by Category */}
+      {brand && assetType && (
         <div className="space-y-4">
           <h3 className="text-sm font-medium text-foreground">Loaded Knowledge</h3>
           {knowledgeDocs.length === 0 ? (
             <Card className="p-6 text-center">
-              <p className="text-sm text-muted-foreground">No documents uploaded for this brand &amp; category.</p>
+              <p className="text-sm text-muted-foreground">No documents uploaded for this brand &amp; type.</p>
             </Card>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {fileTypes.map((ft) => {
-                const Icon = fileTypeIcons[ft];
-                const docs = groupedDocs[ft];
+              {categories.map((cat) => {
+                const Icon = categoryIcons[cat];
+                const docs = groupedDocs[cat];
                 return (
-                  <Card key={ft} className="p-5 card-hover">
+                  <Card key={cat} className="p-5 card-hover">
                     <div className="flex items-center gap-2.5 mb-3">
                       <div className="rounded-lg bg-accent p-2">
                         <Icon className="h-4 w-4 text-accent-foreground" />
                       </div>
-                      <h4 className="text-sm font-medium text-foreground">{fileTypeLabels[ft]}</h4>
+                      <h4 className="text-sm font-medium text-foreground">{cat}</h4>
                       <Badge variant="secondary" className="ml-auto text-[10px]">{docs.length}</Badge>
                     </div>
                     {docs.length === 0 ? (
