@@ -275,7 +275,7 @@ export default function KnowledgeBase() {
             <div className="space-y-4 pt-2">
               <div className="space-y-2">
                 <label className="text-sm font-medium text-foreground">Brand</label>
-                <Select value={uploadBrand} onValueChange={(v) => { setUploadBrand(v); setUploadCategory(""); }}>
+                <Select value={uploadBrand} onValueChange={(v) => { setUploadBrand(v); setUploadFileType(""); }}>
                   <SelectTrigger><SelectValue placeholder="Select brand" /></SelectTrigger>
                   <SelectContent>
                     {brands.map((b) => <SelectItem key={b} value={b}>{b}</SelectItem>)}
