@@ -15,21 +15,26 @@ import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import {
   brands,
-  categoryMap,
+  typeMap,
   fileTypes,
   fileTypeLabels,
+  categories,
   getDocuments,
   addDocument,
   deleteDocument,
   updateDocument,
   type FileType,
+  type Category,
   type KnowledgeDocument,
 } from "@/data/knowledgeData";
 
 const fileTypeBadgeClass: Record<FileType, string> = {
-  compliance: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
-  brand: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300",
-  product: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300",
+  "product-label": "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
+  "email-copy": "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300",
+  "social-media-ad": "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300",
+  "amazon-dsp-ad": "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300",
+  "social-post": "bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-300",
+  "amazon-pdp": "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-300",
 };
 
 export default function KnowledgeBase() {
