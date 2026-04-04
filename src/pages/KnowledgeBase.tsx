@@ -158,7 +158,7 @@ export default function KnowledgeBase() {
   const currentPage = Math.min(page, totalPages);
   const paginatedDocs = sortedDocs.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
-  const filterCategories = filterBrand !== "all" ? categoryMap[filterBrand] || [] : [];
+  const filterTypesByBrand = filterBrand !== "all" ? typeMap[filterBrand] || [] : [];
 
   const highlightMatch = (text: string, query: string) => {
     if (!query) return text;
