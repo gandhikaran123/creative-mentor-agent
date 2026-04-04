@@ -597,20 +597,20 @@ export default function KnowledgeBase() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Category</label>
-                <Select value={editCategory} onValueChange={setEditCategory} disabled={!editBrand}>
-                  <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
+                <label className="text-sm font-medium text-foreground">Type</label>
+                <Select value={editFileType} onValueChange={(v) => setEditFileType(v as FileType)} disabled={!editBrand}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    {(categoryMap[editBrand] || []).map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                    {(typeMap[editBrand] || []).map((ft) => <SelectItem key={ft} value={ft}>{fileTypeLabels[ft]}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">File Type</label>
-                <Select value={editFileType} onValueChange={(v) => setEditFileType(v as FileType)}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                <label className="text-sm font-medium text-foreground">Category</label>
+                <Select value={editCategory} onValueChange={setEditCategory}>
+                  <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
                   <SelectContent>
-                    {fileTypes.map((ft) => <SelectItem key={ft} value={ft}>{fileTypeLabels[ft]}</SelectItem>)}
+                    {categories.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
