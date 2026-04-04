@@ -589,7 +589,7 @@ export default function KnowledgeBase() {
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium text-foreground">Brand</label>
-                <Select value={editBrand} onValueChange={(v) => { setEditBrand(v); setEditCategory(""); }}>
+                <Select value={editBrand} onValueChange={(v) => { setEditBrand(v); setEditFileType(""); }}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {brands.map((b) => <SelectItem key={b} value={b}>{b}</SelectItem>)}
