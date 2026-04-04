@@ -231,7 +231,7 @@ export default function KnowledgeBase() {
 
   const handleEdit = () => {
     if (!editDoc || !editBrand || !editCategory || !editFileType) return;
-    updateDocument(editDoc.id, { brand: editBrand, category: editCategory, fileType: editFileType as FileType });
+    updateDocument(editDoc.id, { brand: editBrand, category: editCategory as Category, fileType: editFileType as FileType });
     setDocs(getDocuments());
     setEditDialogOpen(false);
     setEditDoc(null);
